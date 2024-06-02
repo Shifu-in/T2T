@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let tapPower = Number.parseInt(localStorage.getItem('tapPower'), 10) || 1;
     let autoRate = calculateAutoRate(upgrades);
 
-    // Отображаем текущий баланс, ID пользователя, никнейм и авто-ставку
+    // Обновляем элементы интерфейса
     balanceValueElement.textContent = balance;
     profileBalanceElement.textContent = balance;
     userIdElement.textContent = userId;
@@ -36,10 +36,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // Обработчик клика по кнопке
     tapButton.addEventListener('click', function() {
         balance += tapPower;
-        balanceValueElement.textContent = balance;
-        profileBalanceElement.textContent = balance;
-        localStorage.setItem('balance', balance);
-        showClickEffect();
+        updateBalance(balance);
+        showClickEffect(tapPower);
     });
 
     // Генерация уникального ID пользователя с использованием UUID
@@ -62,10 +60,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Показать эффект клика
-    function showClickEffect() {
+    function showClickEffect(value) {
         const clickEffect = document.createElement('div');
         clickEffect.classList.add('click-effect');
-        clickEffect.textContent = `+${tapPower}`;
+        clickEffect.textContent = `+${value}`;
         clickEffectsContainer.appendChild(clickEffect);
 
         setTimeout(() => {
@@ -82,7 +80,23 @@ document.addEventListener("DOMContentLoaded", function() {
     // Инициализация начальной страницы
     navigateTo('main');
 
-    // Получение обновлений по умолчанию
+    // Функция для обновления баланса
+    function updateBalance(newBalance) {
+        balance = newBalance;
+        balanceValueElement.textContent = balance;
+        profileBalanceElement.textContent = balance;
+        localStorage.setItem('balance', balance);
+    }
+
+    // Функция авто-начислений
+    function autoIncrement() {
+        balance += autoRate;
+        updateBalance(balance);
+    }
+    
+    setInterval(autoIncrement, 1000);
+
+    // Получение улучшений по умолчанию
     function getDefaultUpgrades() {
         return {
             CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 10, costIncrement: 1.3 },
@@ -125,7 +139,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     localStorage.setItem('upgrades', JSON.stringify(upgrades));
                     balanceValueElement.textContent = balance;
                     profileBalanceElement.textContent = balance;
-                    autoRateElement.textContent = calculateAutoRate(upgrades);
+                    autoRate = calculateAutoRate(upgrades);
+                    autoRateElement.textContent = autoRate;
                     renderUpgrades(upgrades);
                 }
             };
