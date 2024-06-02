@@ -28,6 +28,8 @@
             <button class="nav-button" onclick="navigateTo('profile')">Profile</button>
             <button class="nav-button" onclick="navigateTo('store')">Store</button>
             <button class="nav-button" onclick="navigateTo('partners')">Partners</button>
+            <button class="nav-button" onclick="navigateTo('entertainment')">Entertainment</button>
+            <button class="nav-button" onclick="navigateTo('property')">Property</button>
         </div>
     </div>
 
@@ -70,6 +72,53 @@
                 <button class="nav-button" onclick="checkSubscription('shifucrypto')">Check Subscription</button>
             </div>
             <!-- Add more partners as needed -->
+        </div>
+        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+    </div>
+
+    <div class="game-window" id="entertainment-page" style="display:none;">
+        <div class="top-bar">
+            <span>Entertainment</span>
+        </div>
+        <div class="entertainment-content">
+            <h1>Tic-Tac-Toe</h1>
+            <div id="gameMode">
+                <label for="players">Select number of players:</label>
+                <select id="players">
+                    <option value="0">0 Players</option>
+                    <option value="1">1 Player</option>
+                    <option value="2">2 Players</option>
+                </select>
+                <button id="startButton">Start Game</button>
+            </div>
+            <div id="gameBoard" class="hidden">
+                <div class="row">
+                    <div class="cell" data-index="0"></div>
+                    <div class="cell" data-index="1"></div>
+                    <div class="cell" data-index="2"></div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-index="3"></div>
+                    <div class="cell" data-index="4"></div>
+                    <div class="cell" data-index="5"></div>
+                </div>
+                <div class="row">
+                    <div class="cell" data-index="6"></div>
+                    <div class="cell" data-index="7"></div>
+                    <div class="cell" data-index="8"></div>
+                </div>
+            </div>
+            <div id="status"></div>
+        </div>
+        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+    </div>
+
+    <div class="game-window" id="property-page" style="display:none;">
+        <div class="top-bar">
+            <span>Property</span>
+        </div>
+        <div class="property-content">
+            <h1>Coming Soon</h1>
         </div>
         <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
     </div>
