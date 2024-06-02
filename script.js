@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function() {
         'DarkAvenger', 'LightGuardian', 'SilentShadow', 'MysticSeer', 'ArcaneKnight'
     ];
 
-    // Получаем данные пользователя из локального хранилища
     let balance = Number.parseInt(localStorage.getItem('balance'), 10) || 0;
     let userId = localStorage.getItem('userId') || generateUserId();
     let username = localStorage.getItem('username') || generateUsername();
@@ -24,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let tapPower = Number.parseInt(localStorage.getItem('tapPower'), 10) || 1;
     let autoRate = calculateAutoRate(upgrades);
 
-    // Обновляем элементы интерфейса
     balanceValueElement.textContent = balance;
     profileBalanceElement.textContent = balance;
     userIdElement.textContent = userId;
@@ -33,21 +31,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
     renderUpgrades(upgrades);
 
-    // Обработчик клика по кнопке
     tapButton.addEventListener('click', function() {
         balance += tapPower;
         updateBalance(balance);
         showClickEffect(tapPower);
     });
 
-    // Генерация уникального ID пользователя с использованием UUID
     function generateUserId() {
         const id = crypto.randomUUID();
         localStorage.setItem('userId', id);
         return id;
     }
 
-    // Генерация уникального никнейма пользователя
     function generateUsername() {
         let username;
         do {
@@ -59,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return username;
     }
 
-    // Показать эффект клика
     function showClickEffect(value) {
         const clickEffect = document.createElement('div');
         clickEffect.classList.add('click-effect');
@@ -71,16 +65,13 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 500);
     }
 
-    // Навигация между страницами
     window.navigateTo = function(page) {
         document.querySelectorAll('.game-window').forEach(div => div.style.display = 'none');
         document.getElementById(`${page}-page`).style.display = 'flex';
     }
 
-    // Инициализация начальной страницы
     navigateTo('main');
 
-    // Функция для обновления баланса
     function updateBalance(newBalance) {
         balance = newBalance;
         balanceValueElement.textContent = balance;
@@ -88,7 +79,6 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.setItem('balance', balance);
     }
 
-    // Функция авто-начислений
     function autoIncrement() {
         balance += autoRate;
         updateBalance(balance);
@@ -96,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function() {
     
     setInterval(autoIncrement, 1000);
 
-    // Получение улучшений по умолчанию
     function getDefaultUpgrades() {
         return {
             CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 50, costIncrement: 1.15, maxLevel: 10 },
@@ -108,64 +97,10 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     }
 
-    // Рендеринг улучшений
     function renderUpgrades(upgrades) {
         upgradeListElement.innerHTML = '';
         for (const [key, upgrade] of Object.entries(upgrades)) {
             const upgradeDiv = document.createElement('div');
             upgradeDiv.className = `upgrade ${balance < upgrade.cost || upgrade.level >= upgrade.maxLevel ? "-disabled" : ''}`;
             upgradeDiv.innerHTML = `
-                <div class="upgrade-img"></div>
-                <div class="upgrade-info">
-                    <h2>${upgrade.displayName}</h2>
-                    <ul>
-                        <li>Lv. ${upgrade.level}</li>
-                        <li class="cost ${balance < upgrade.cost ? '-disabled' : ''}">${upgrade.cost}</li>
-                        <li class="income">Income: ${calculateIncome(upgrade)} Energy/sec</li>
-                    </ul>
-                </div>
-            `;
-            upgradeDiv.onclick = () => {
-                if (balance >= upgrade.cost && !upgrade.unavailable && upgrade.level < upgrade.maxLevel) {
-                    balance -= upgrade.cost;
-                    upgrade.level += 1;
-                    upgrade.cost = Math.floor(upgrade.cost * upgrade.costIncrement);
-                    if (key === 'CLICK_MULTIPLIER') {
-                        tapPower += upgrade.baseMultiplier;
-                        localStorage.setItem('tapPower', tapPower);
-                    } else if (upgrade.baseMultiplier) {
-                        upgrade.baseMultiplier += 1;
-                    }
-                    localStorage.setItem('balance', balance);
-                    localStorage.setItem('upgrades', JSON.stringify(upgrades));
-                    balanceValueElement.textContent = balance;
-                    profileBalanceElement.textContent = balance;
-                    autoRate = calculateAutoRate(upgrades);
-                    autoRateElement.textContent = autoRate;
-                    renderUpgrades(upgrades);
-                    upgradeDiv.classList.add('active'); // Добавляем класс выделения
-                    setTimeout(() => {
-                        upgradeDiv.classList.remove('active'); // Убираем класс через некоторое время
-                    }, 200);
-                }
-            };
-            upgradeListElement.appendChild(upgradeDiv);
-        }
-    }
-
-    // Вычисление авто-ставки
-    function calculateAutoRate(upgrades) {
-        let autoRate = 0;
-        for (const upgrade of Object.values(upgrades)) {
-            if (upgrade.baseMultiplier && !upgrade.isResourceMultiplier) {
-                autoRate += upgrade.baseMultiplier * upgrade.level;
-            }
-        }
-        return autoRate;
-    }
-
-    // Вычисление дохода от апгрейда
-    function calculateIncome(upgrade) {
-        return upgrade.baseMultiplier * upgrade.level;
-    }
-});
+               
