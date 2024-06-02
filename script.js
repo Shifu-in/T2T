@@ -157,12 +157,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const statusDisplay = document.getElementById("status");
     const gameBoard = document.getElementById("gameBoard");
     const startButton = document.getElementById("startButton");
-    const playersSelect = document.getElementById("players");
 
     let ticTacToeBoard = ["", "", "", "", "", "", "", "", ""];
     let currentPlayer = "X";
     let gameActive = true;
-    let numPlayers = 2;
+    let numPlayers = 1;  // Always 1 player
 
     const winningConditions = [
         [0, 1, 2],
@@ -255,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     startButton.addEventListener("click", () => {
-        numPlayers = parseInt(playersSelect.value);
+        numPlayers = 1;  // Always 1 player
         gameBoard.classList.remove("hidden");
         resetGame();
     });
