@@ -91,9 +91,9 @@ document.addEventListener("DOMContentLoaded", function() {
             CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 50, costIncrement: 1.15, maxLevel: 10 },
             AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 1, level: 0, cost: 300, costIncrement: 1.15, maxLevel: 10 },
             VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 2, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
-            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 1, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10 },
-            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 2, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10 },
-            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 4, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10 }
+            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 5, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10 },
+            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 10, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10 },
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 20, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10 }
         };
     }
 
@@ -143,9 +143,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function calculateAutoRate(upgrades) {
         let autoRate = 0;
         for (const upgrade of Object.values(upgrades)) {
-            if (!upgrade.isResourceMultiplier) {
-                autoRate += upgrade.baseMultiplier * upgrade.level;
-            }
+            autoRate += upgrade.baseMultiplier * upgrade.level;
         }
         return autoRate;
     }
