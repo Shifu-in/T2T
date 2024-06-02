@@ -99,12 +99,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // Получение улучшений по умолчанию
     function getDefaultUpgrades() {
         return {
-            CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 10, costIncrement: 1.3 },
-            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 0, level: 0, cost: 50, costIncrement: 1.1 },
-            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 0, level: 0, cost: 250, costIncrement: 1.1 },
-            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 1000, costIncrement: 1.1, isResourceMultiplier: true },
-            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.1, isResourceMultiplier: true },
-            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 1000000, costIncrement: 1.1, unavailable: true, isResourceMultiplier: true }
+            CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 500, costIncrement: 1.15 },
+            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 0, level: 0, cost: 3000, costIncrement: 1.15 },
+            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.15 },
+            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 10000, costIncrement: 1.15, isResourceMultiplier: true },
+            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 50000, costIncrement: 1.15, isResourceMultiplier: true },
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 100000, costIncrement: 1.15, unavailable: true, isResourceMultiplier: true }
         };
     }
 
