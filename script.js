@@ -103,4 +103,55 @@ document.addEventListener("DOMContentLoaded", function() {
             const upgradeDiv = document.createElement('div');
             upgradeDiv.className = `upgrade ${balance < upgrade.cost || upgrade.level >= upgrade.maxLevel ? "-disabled" : ''}`;
             upgradeDiv.innerHTML = `
-               
+                <div class="upgrade-img"></div>
+                <div class="upgrade-info">
+                    <h2>${upgrade.displayName}</h2>
+                    <ul>
+                        <li>Lv. ${upgrade.level}</li>
+                        <li class="cost ${balance < upgrade.cost ? '-disabled' : ''}">${upgrade.cost}</li>
+                        <li class="income">Income: ${calculateIncome(upgrade)} Energy/sec</li>
+                    </ul>
+                </div>
+            `;
+            upgradeDiv.onclick = () => {
+                if (balance >= upgrade.cost && !upgrade.unavailable && upgrade.level < upgrade.maxLevel) {
+                    balance -= upgrade.cost;
+                    upgrade.level += 1;
+                    upgrade.cost = Math.floor(upgrade.cost * upgrade.costIncrement);
+                    if (key === 'CLICK_MULTIPLIER') {
+                        tapPower += upgrade.baseMultiplier;
+                        localStorage.setItem('tapPower', tapPower);
+                    } else if (upgrade.baseMultiplier) {
+                        upgrade.baseMultiplier += 1;
+                    }
+                    localStorage.setItem('balance', balance);
+                    localStorage.setItem('upgrades', JSON.stringify(upgrades));
+                    balanceValueElement.textContent = balance;
+                    profileBalanceElement.textContent = balance;
+                    autoRate = calculateAutoRate(upgrades);
+                    autoRateElement.textContent = autoRate;
+                    renderUpgrades(upgrades);
+                    upgradeDiv.classList.add('active'); // Добавляем класс выделения
+                    setTimeout(() => {
+                        upgradeDiv.classList.remove('active'); // Убираем класс через некоторое время
+                    }, 200);
+                }
+            };
+            upgradeListElement.appendChild(upgradeDiv);
+        }
+    }
+
+    function calculateAutoRate(upgrades) {
+        let autoRate = 0;
+        for (const upgrade of Object.values(upgrades)) {
+            if (upgrade.baseMultiplier && !upgrade.isResourceMultiplier) {
+                autoRate += upgrade.baseMultiplier * upgrade.level;
+            }
+        }
+        return autoRate;
+    }
+
+    function calculateIncome(upgrade) {
+        return upgrade.baseMultiplier * upgrade.level;
+    }
+});
