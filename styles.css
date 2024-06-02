@@ -289,3 +289,34 @@ body {
 .upgrade.active {
     border: 3px solid cyan;
 }
+
+/* Added CSS for partners section */
+.partners-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #0a1a2b;
+    padding: 1rem;
+}
+
+.partner {
+    background-color: #12263f;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    width: 80%;
+    text-align: center;
+}
+
+.partner h3 {
+    margin: 0.5rem 0;
+}
+
+.partner p {
+    margin: 0.5rem 0;
+}
+
+.partner .nav-button {
+    margin
