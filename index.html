@@ -27,6 +27,7 @@
         <div class="navigation">
             <button class="nav-button" onclick="navigateTo('profile')">Profile</button>
             <button class="nav-button" onclick="navigateTo('store')">Store</button>
+            <button class="nav-button" onclick="navigateTo('partners')">Partners</button>
         </div>
     </div>
 
@@ -55,6 +56,22 @@
             </div>
             <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
         </div>
+    </div>
+
+    <div class="game-window" id="partners-page" style="display:none;">
+        <div class="top-bar">
+            <span>Partners</span>
+        </div>
+        <div class="partners-content">
+            <div class="partner">
+                <h3>Shifu Crypto</h3>
+                <p>Subscribe to our Telegram channel and earn 5,000 points!</p>
+                <button class="nav-button" onclick="subscribeToChannel('shifucrypto')">Subscribe</button>
+                <button class="nav-button" onclick="checkSubscription('shifucrypto')">Check Subscription</button>
+            </div>
+            <!-- Add more partners as needed -->
+        </div>
+        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
