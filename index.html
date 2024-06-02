@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-window">
+    <div class="game-window" id="main-page">
         <div class="top-bar">
             <span>Balance: <span id="balance-value">0</span></span>
             <span class="game-message">Tap the planet to earn points!</span>
@@ -24,7 +24,33 @@
                 <img src="https://raw.githubusercontent.com/JdyL/img-host/25e95e7b28baed293f29217d803ed09b90fc96c1/svg/space-clicker/stars.svg" alt="stars">
             </div>
         </div>
+        <div class="navigation">
+            <button class="nav-button" onclick="navigateTo('profile')">Profile</button>
+            <button class="nav-button" onclick="navigateTo('store')">Store</button>
+        </div>
     </div>
+
+    <div class="game-window" id="profile-page" style="display:none;">
+        <div class="top-bar">
+            <span>User Profile</span>
+        </div>
+        <div class="profile-content">
+            <p>User ID: <span id="user-id"></span></p>
+            <p>Balance: <span id="profile-balance">0</span></p>
+            <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+        </div>
+    </div>
+
+    <div class="game-window" id="store-page" style="display:none;">
+        <div class="top-bar">
+            <span>Store</span>
+        </div>
+        <div class="store-content">
+            <p>Upgrades and items will be available here.</p>
+            <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
