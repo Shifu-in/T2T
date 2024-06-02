@@ -93,8 +93,7 @@ document.addEventListener("DOMContentLoaded", function() {
             VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 2, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
             ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
             DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
-            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level
-: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10, unavailable: true, isResourceMultiplier: true }
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10, unavailable: true, isResourceMultiplier: true }
         };
     }
 
@@ -123,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         tapPower += upgrade.baseMultiplier;
                         localStorage.setItem('tapPower', tapPower);
                     } else {
-                        autoRate += upgrade.baseMultiplier; // Увеличиваем autoRate
+                        autoRate += upgrade.baseMultiplier;
                     }
                     localStorage.setItem('balance', balance);
                     localStorage.setItem('upgrades', JSON.stringify(upgrades));
@@ -131,9 +130,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     profileBalanceElement.textContent = balance;
                     autoRateElement.textContent = autoRate;
                     renderUpgrades(upgrades);
-                    upgradeDiv.classList.add('active'); // Добавляем класс выделения
+                    upgradeDiv.classList.add('active');
                     setTimeout(() => {
-                        upgradeDiv.classList.remove('active'); // Убираем класс через некоторое время
+                        upgradeDiv.classList.remove('active');
                     }, 200);
                 }
             };
@@ -156,5 +155,17 @@ document.addEventListener("DOMContentLoaded", function() {
             return 0;
         }
         return upgrade.baseMultiplier * upgrade.level;
+    }
+
+    window.subscribeToChannel = function(channel) {
+        // Add logic to subscribe to the channel and update the user interface accordingly
+        alert(`Subscribed to ${channel} channel!`);
+    }
+
+    window.checkSubscription = function(channel) {
+        // Add logic to check subscription and grant rewards
+        alert(`Checked subscription for ${channel} channel! You earned 5,000 points!`);
+        balance += 5000;
+        updateBalance(balance);
     }
 });
