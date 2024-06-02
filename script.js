@@ -99,12 +99,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // Получение улучшений по умолчанию
     function getDefaultUpgrades() {
         return {
-            CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 500, costIncrement: 1.15 },
-            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 0, level: 0, cost: 3000, costIncrement: 1.15 },
-            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.15 },
-            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 10000, costIncrement: 1.15, isResourceMultiplier: true },
-            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 50000, costIncrement: 1.15, isResourceMultiplier: true },
-            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 100000, costIncrement: 1.15, unavailable: true, isResourceMultiplier: true }
+            CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
+            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 0, level: 0, cost: 3000, costIncrement: 1.15, maxLevel: 10 },
+            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10 },
+            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
+            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 50000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 100000, costIncrement: 1.15, maxLevel: 10, unavailable: true, isResourceMultiplier: true }
         };
     }
 
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
         upgradeListElement.innerHTML = '';
         for (const [key, upgrade] of Object.entries(upgrades)) {
             const upgradeDiv = document.createElement('div');
-            upgradeDiv.className = `upgrade ${balance < upgrade.cost ? "-disabled" : ''}`;
+            upgradeDiv.className = `upgrade ${balance < upgrade.cost || upgrade.level >= upgrade.maxLevel ? "-disabled" : ''}`;
             upgradeDiv.innerHTML = `
                 <div class="upgrade-img"></div>
                 <div class="upgrade-info">
@@ -121,11 +121,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     <ul>
                         <li>Lv. ${upgrade.level}</li>
                         <li class="cost ${balance < upgrade.cost ? '-disabled' : ''}">${upgrade.cost}</li>
+                        <li class="income">Income: ${calculateIncome(upgrade)} Energy/sec</li>
                     </ul>
                 </div>
             `;
             upgradeDiv.onclick = () => {
-                if (balance >= upgrade.cost && !upgrade.unavailable) {
+                if (balance >= upgrade.cost && !upgrade.unavailable && upgrade.level < upgrade.maxLevel) {
                     balance -= upgrade.cost;
                     upgrade.level += 1;
                     upgrade.cost = Math.floor(upgrade.cost * upgrade.costIncrement);
@@ -161,5 +162,10 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
         return autoRate;
+    }
+
+    // Вычисление дохода от апгрейда
+    function calculateIncome(upgrade) {
+        return upgrade.baseMultiplier * upgrade.level;
     }
 });
