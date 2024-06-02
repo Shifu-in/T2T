@@ -223,11 +223,11 @@ document.addEventListener("DOMContentLoaded", function() {
             for (let i = 0; i <= 8; i++) {
                 let selector = "#space-" + i;
                 if (board[i]) {
-                    $(selector).html(board[i]);
-                    $(selector).removeClass("empty");
+                    document.querySelector(selector).innerHTML = board[i];
+                    document.querySelector(selector).classList.remove("empty");
                 } else {
-                    $(selector).html("");
-                    $(selector).addClass("empty");
+                    document.querySelector(selector).innerHTML = "";
+                    document.querySelector(selector).classList.add("empty");
                 }
             }
 
@@ -240,8 +240,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 } else {
                     message = "You win!";
                 }
-                $(".message").html(message);
-                $(".message-area").fadeIn(600);
+                document.querySelector(".message").innerHTML = message;
+                document.querySelector(".message-area").style.display = 'block';
             }
         }
 
@@ -359,17 +359,17 @@ document.addEventListener("DOMContentLoaded", function() {
     let myGame = new Game(myAI);
     myAI.plays(myGame);
 
-    $(".selection-area .btn").on("click", function() {
-        playerSymbol = $(this).attr("id");
+    document.querySelector(".selection-area .btn#X").addEventListener('click', function() {
+        playerSymbol = "X";
+        compSymbol = "O";
+        playerTurn = true;
+        playGame();
+    });
 
-        if (playerSymbol == "X") {
-            compSymbol = "O";
-            playerTurn = true;
-        } else {
-            compSymbol = "X";
-            playerTurn = false;
-        }
-
+    document.querySelector(".selection-area .btn#O").addEventListener('click', function() {
+        playerSymbol = "O";
+        compSymbol = "X";
+        playerTurn = false;
         playGame();
     });
 
@@ -383,33 +383,33 @@ document.addEventListener("DOMContentLoaded", function() {
         myAI.AISymbol = compSymbol;
         Game.prototype.playerSymbol = playerSymbol;
 
-        $(".hide-me").fadeOut(600).promise().done(function() {
-            $(".board-area").fadeIn(600, function() {
-                if (myAI.AISymbol == "X") {
+        document.querySelector(".hide-me").style.display = 'none';
+        document.querySelector(".board-area").style.display = 'block';
+
+        if (myAI.AISymbol == "X") {
+            myGame.ai.takeMove(myGame.currentState);
+            myGame.updateUI();
+            playerTurn = true;
+        }
+    }
+
+    document.querySelectorAll(".space").forEach(cell => {
+        cell.addEventListener('click', function() {
+            let num = this.getAttribute('id').substr(6, 6);
+            if (playerTurn && myGame.isValid(num)) {
+                let newState = new State(myGame.currentState, { turn: playerSymbol, position: num });
+                myGame.advanceTo(newState);
+                myGame.updateUI();
+                playerTurn = false;
+
+                setTimeout(function() {
                     myGame.ai.takeMove(myGame.currentState);
                     myGame.updateUI();
                     playerTurn = true;
-                }
-            });
+                }, 1000);
+            }
         });
-    }
-
-    $(".space").on("click", function() {
-        let num = $(this).attr("id");
-        num = num.substr(6, 6);
-        if (playerTurn && myGame.isValid(num)) {
-            let newState = new State(myGame.currentState, { turn: playerSymbol, position: num });
-            myGame.advanceTo(newState);
-            myGame.updateUI();
-            playerTurn = false;
-
-            setTimeout(function() {
-                myGame.ai.takeMove(myGame.currentState);
-                myGame.updateUI();
-                playerTurn = true;
-            }, 1000);
-        }
     });
 
-    $("#replay").on("click", playGame);
+    document.querySelector("#replay").addEventListener('click', playGame);
 });
