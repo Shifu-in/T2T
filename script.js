@@ -100,4 +100,66 @@ document.addEventListener("DOMContentLoaded", function() {
     function getDefaultUpgrades() {
         return {
             CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 10, costIncrement: 1.3 },
-            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 0, level: 0, cost: 50, costIncrement: 1.1
+            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 0, level: 0, cost: 50, costIncrement: 1.1 },
+            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 0, level: 0, cost: 250, costIncrement: 1.1 },
+            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 1000, costIncrement: 1.1, isResourceMultiplier: true },
+            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.1, isResourceMultiplier: true },
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 1000000, costIncrement: 1.1, unavailable: true, isResourceMultiplier: true }
+        };
+    }
+
+    // Рендеринг улучшений
+    function renderUpgrades(upgrades) {
+        upgradeListElement.innerHTML = '';
+        for (const [key, upgrade] of Object.entries(upgrades)) {
+            const upgradeDiv = document.createElement('div');
+            upgradeDiv.className = `upgrade ${balance < upgrade.cost ? "-disabled" : ''}`;
+            upgradeDiv.innerHTML = `
+                <div class="upgrade-img"></div>
+                <div class="upgrade-info">
+                    <h2>${upgrade.displayName}</h2>
+                    <ul>
+                        <li>Lv. ${upgrade.level}</li>
+                        <li class="cost ${balance < upgrade.cost ? '-disabled' : ''}">${upgrade.cost}</li>
+                    </ul>
+                </div>
+            `;
+            upgradeDiv.onclick = () => {
+                if (balance >= upgrade.cost && !upgrade.unavailable) {
+                    balance -= upgrade.cost;
+                    upgrade.level += 1;
+                    upgrade.cost = Math.floor(upgrade.cost * upgrade.costIncrement);
+                    if (key === 'CLICK_MULTIPLIER') {
+                        tapPower += upgrade.baseMultiplier;
+                        localStorage.setItem('tapPower', tapPower);
+                    } else if (upgrade.baseMultiplier) {
+                        upgrade.baseMultiplier += 1;
+                    }
+                    localStorage.setItem('balance', balance);
+                    localStorage.setItem('upgrades', JSON.stringify(upgrades));
+                    balanceValueElement.textContent = balance;
+                    profileBalanceElement.textContent = balance;
+                    autoRate = calculateAutoRate(upgrades);
+                    autoRateElement.textContent = autoRate;
+                    renderUpgrades(upgrades);
+                    upgradeDiv.classList.add('active'); // Добавляем класс выделения
+                    setTimeout(() => {
+                        upgradeDiv.classList.remove('active'); // Убираем класс через некоторое время
+                    }, 200);
+                }
+            };
+            upgradeListElement.appendChild(upgradeDiv);
+        }
+    }
+
+    // Вычисление авто-ставки
+    function calculateAutoRate(upgrades) {
+        let autoRate = 0;
+        for (const upgrade of Object.values(upgrades)) {
+            if (upgrade.baseMultiplier && !upgrade.isResourceMultiplier) {
+                autoRate += upgrade.baseMultiplier * upgrade.level;
+            }
+        }
+        return autoRate;
+    }
+});
