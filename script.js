@@ -91,9 +91,9 @@ document.addEventListener("DOMContentLoaded", function() {
             CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 50, costIncrement: 1.15, maxLevel: 10 },
             AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 1, level: 0, cost: 300, costIncrement: 1.15, maxLevel: 10 },
             VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 2, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
-            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
-            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
-            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10, unavailable: true, isResourceMultiplier: true }
+            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 1, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10 },
+            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 2, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10 },
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 4, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10 }
         };
     }
 
@@ -151,21 +151,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function calculateIncome(upgrade) {
-        if (upgrade.isResourceMultiplier) {
-            return 0;
-        }
         return upgrade.baseMultiplier * upgrade.level;
-    }
-
-    window.subscribeToChannel = function(channel) {
-        // Add logic to subscribe to the channel and update the user interface accordingly
-        alert(`Subscribed to ${channel} channel!`);
-    }
-
-    window.checkSubscription = function(channel) {
-        // Add logic to check subscription and grant rewards
-        alert(`Checked subscription for ${channel} channel! You earned 5,000 points!`);
-        balance += 5000;
-        updateBalance(balance);
     }
 });
