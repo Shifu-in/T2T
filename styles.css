@@ -129,4 +129,135 @@ body {
     }
     to {
         bottom: 30%;
- 
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.click-effect {
+    width: 100px;
+    position: absolute;
+    left: 50%;
+    bottom: 0%;
+    opacity: 1;
+    animation: fade 0.5s, move-up 0.5s;
+    animation-fill-mode: forwards;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+}
+
+.nav-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #3dffe5;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: #071521;
+}
+
+.nav-button:hover {
+    background-color: #2bccb5;
+}
+
+.profile-content,
+.store-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.profile-content p,
+.store-content p {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.store-content {
+    overflow: auto;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-image: url('https://raw.githubusercontent.com/JdyL/img-host/e622701c56ca30f2dc0fca8760dd9a5fa03b5b53/svg/space-clicker/tablet.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-sizing: border-box;
+    padding: 20vh 20vh 5vh 20vh;
+    align-items: flex-start;
+    margin-left: 1rem;
+}
+
+.store-content .info {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding-bottom: 1rem;
+    color: cyan;
+}
+
+.upgrade-list { 
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.upgrade {
+    display: flex;
+    flex-direction: column;
+    box-sizing: box-border;
+    transition: 0.2s;
+    cursor: pointer;
+    color: white;
+    border-radius: 0.2rem;
+    margin-bottom: 1vh;
+    user-select: none;
+    flex: 1;
+    border: 3px solid #3dffe5;
+}
+
+.upgrade:not(:last-child){
+    margin-right: 1rem;
+}
+      
+.upgrade.-disabled {
+    background-color: transparent;
+    opacity: 0.5;
+    cursor: no-drop;
+    border: none;
+}
+      
+.upgrade:not(.-disabled):hover {
+    transform: scale(1.05);
+}
+
+.upgrade .upgrade-img {
+    width: 100%;
+    height: 20vh;
+    background-color: black;
+    border: 1px solid white;
+    align-self: center;
+}
+
+.upgrade .upgrade-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    box-sizing: border
