@@ -7,10 +7,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <h1>Tap Game</h1>
-        <div id="balance">Balance: <span id="balance-value">0</span></div>
-        <button id="tap-button">Tap</button>
+    <div class="game-window">
+        <div class="top-bar">
+            <span>Balance: <span id="balance-value">0</span></span>
+            <span class="game-message">Tap the planet to earn points!</span>
+        </div>
+        <div class="game-screen">
+            <div class="cookie-container">
+                <div class="cookie" id="tap-button">
+                    <img src="https://raw.githubusercontent.com/JdyL/img-host/eb12be794f4871f010a76e82211fbdff4c8dea00/svg/space-clicker/cookie.svg" alt="planet">
+                </div>
+                <div class="click-effect-container" id="click-effects">
+                </div>
+            </div>
+            <div class="stars">
+                <img src="https://raw.githubusercontent.com/JdyL/img-host/25e95e7b28baed293f29217d803ed09b90fc96c1/svg/space-clicker/stars.svg" alt="stars">
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
