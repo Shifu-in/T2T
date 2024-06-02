@@ -1,132 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Game</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Тик-Так-Тое</title>
 </head>
 <body>
-    <div class="game-window" id="main-page">
-        <div class="top-bar">
-            <span>Balance: <span id="balance-value">0</span></span>
-            <span class="game-message">Tap the planet to earn points!</span>
+  <div class="app">
+    <div class="header">
+      <div class="menu-circle"></div>
+      <div class="header-menu">
+        <a class="menu-link is-active" href="#">Игры</a>
+        <a class="menu-link notify" href="#">Работа</a>
+        <a class="menu-link" href="#">Открытия</a>
+        <a class="menu-link notify" href="#">Маркет</a>
+      </div>
+      <div class="header-profile">
+        <div class="notification">
+          <span class="notification-number">3</span>
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"></path>
+          </svg>
         </div>
-        <div class="game-screen">
-            <div class="cookie-container">
-                <div class="cookie" id="tap-button">
-                    <img src="https://raw.githubusercontent.com/JdyL/img-host/eb12be794f4871f010a76e82211fbdff4c8dea00/svg/space-clicker/cookie.svg" alt="planet">
-                </div>
-                <div class="click-effect-container" id="click-effects">
-                </div>
-            </div>
-            <div class="stars">
-                <img src="https://raw.githubusercontent.com/JdyL/img-host/25e95e7b28baed293f29217d803ed09b90fc96c1/svg/space-clicker/stars.svg" alt="stars">
-            </div>
-        </div>
-        <div class="navigation">
-            <button class="nav-button" onclick="navigateTo('profile')">Profile</button>
-            <button class="nav-button" onclick="navigateTo('store')">Store</button>
-            <button class="nav-button" onclick="navigateTo('partners')">Partners</button>
-            <button class="nav-button" onclick="navigateTo('entertainment')">Entertainment</button>
-            <button class="nav-button" onclick="navigateTo('property')">Property</button>
-        </div>
+        <img class="profile-img" src="https://images.unsplash.com/photo-1600353068440-6361ef3a86e8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="">
+      </div>
     </div>
-
-    <div class="game-window" id="profile-page" style="display:none;">
-        <div class="top-bar">
-            <span>User Profile</span>
+    <div class="wrapper">
+      <div class="left-side">
+        <div class="side-wrapper">
+          <div class="side-title">Игры</div>
+          <div class="side-menu">
+            <a href="#">Все Игры</a>
+            <a href="#">Обновления</a>
+          </div>
         </div>
-        <div class="profile-content">
-            <p>User ID: <span id="user-id"></span></p>
-            <p>Username: <span id="username"></span></p>
-            <p>Balance: <span id="profile-balance">0</span></p>
-            <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+      </div>
+      <div class="main-container">
+        <div class="main-header">
+          <a class="menu-link-main" href="#">Все Игры</a>
+          <div class="header-menu">
+            <a class="main-header-link is-active" href="#">Крестики-нолики</a>
+            <a class="main-header-link" href="#">Игры</a>
+            <a class="main-header-link" href="#">Web</a>
+          </div>
         </div>
-    </div>
-
-    <div class="game-window" id="store-page" style="display:none;">
-        <div class="top-bar">
-            <span>Store</span>
-        </div>
-        <div class="store-content">
-            <div class="info">
-                Auto-rate: <span id="auto-rate">0</span> Energy/sec
+        <div class="content-wrapper">
+          <div class="content-wrapper-header">
+            <div class="content-wrapper-context">
+              <h3 class="img-content">
+                <svg viewBox="0 0 512 512">
+                  <path d="M467 0H45C20.099 0 0 20.099 0 45v422c0 24.901 20.099 45 45 45h422c24.901 0 45-20.099 45-45V45c0-24.901-20.099-45-45-45z" fill="#d6355b" data-original="#ff468c"></path>
+                  <path xmlns="http://www.w3.org/2000/svg" d="M512 45v422c0 24.901-20.099 45-45 45H256V0h211c24.901 0 45 20.099 45 45z" fill="#d6355b" data-original="#d72878"></path>
+                  <path xmlns="http://www.w3.org/2000/svg" d="M467 30H45c-8.401 0-15 6.599-15 15v422c0 8.401 6.599 15 15 15h422c8.401 0 15-6.599 15-15V45c0-8.401-6.599-15-15-15z" fill="#2e000a" data-original="#700029"></path>
+                  <path xmlns="http://www.w3.org/2000/svg" d="M482 45v422c0 8.401-6.599 15-15 15H256V30h211c8.401 0 15 6.599 15 15z" fill="#2e000a" data-original="#4d0e06"></path>
+                  <path xmlns="http://www.w3.org/2000/svg" d="M181 391c-41.353 0-75-33.647-75-75 0-8.291 6.709-15 15-15s15 6.709 15 15c0 24.814 20.186 45 45 45s45-20.186 45-45-20.186-45-45-45c-41.353 0-75-33.647-75-75s33.647-75 75-75 75 33.647 75 75c0 8.291-6.709 15-15 15s-15-6.709-15-15c0-24.814-20.186-45-45-45s-45 20.186-45 45 20.186 45 45 45c41.353 0 75 33.647 75 75s-33.647 75-75 75z" fill="#d6355b" data-original="#ff468c"></path>
+                  <path xmlns="http://www.w3.org/2000/svg" d="M391 361h-30c-8.276 0-15-6.724-15-15V211h45c8.291 0 15-6.709 15-15s-6.709-15-15-15h-45v-45c0-8.291-6.709-15-15-15s-15 6.709-15 15v45h-15c-8.291 0-15 6.709-15 15s6.709 15 15 15h15v135c0 24.814 20.186 45 45 45h30c8.291 0 15-6.709 15-15s-7.168-15-15-15z" fill="#d6355b" data-original="#d72878"></path>
+                </svg>
+                Крестики-нолики
+              </h3>
+              <div class="content-text">Игра крестики-нолики для одного игрока против компьютера.</div>
+              <button class="content-button" id="startGame">Начать игру</button>
             </div>
-            <div class="upgrade-list" id="upgrade-list">
-                <!-- Upgrades will be rendered here -->
+          </div>
+          <div class="content-section">
+            <div class="content-section-title">Игровое поле</div>
+            <div class="board-area">
+              <table class="board">
+                <tr>
+                  <td class="space text-center empty" id="space-0"></td>
+                  <td class="space text-center empty" id="space-1"></td>
+                  <td class="space text-center empty" id="space-2"></td>
+                </tr>
+                <tr>
+                  <td class="space text-center empty" id="space-3"></td>
+                  <td class="space text-center empty" id="space-4"></td>
+                  <td class="space text-center empty" id="space-5"></td>
+                </tr>
+                <tr>
+                  <td class="space text-center empty" id="space-6"></td>
+                  <td class="space text-center empty" id="space-7"></td>
+                  <td class="space text-center empty" id="space-8"></td>
+                </tr>
+              </table>
             </div>
-            <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
-        </div>
-    </div>
-
-    <div class="game-window" id="partners-page" style="display:none;">
-        <div class="top-bar">
-            <span>Partners</span>
-        </div>
-        <div class="partners-content">
-            <div class="partner">
-                <h3>Shifu Crypto</h3>
-                <p>Subscribe to our Telegram channel and earn 5,000 points!</p>
-                <button class="nav-button" onclick="subscribeToChannel('shifucrypto')">Subscribe</button>
-                <button class="nav-button" onclick="checkSubscription('shifucrypto')">Check Subscription</button>
+            <div class="message-area hide-me">
+              <h3 class="message">You Lose.</h3>
+              <button class="content-button" id="replay">Играть снова</button>
             </div>
-            <!-- Add more partners as needed -->
+          </div>
         </div>
-        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+      </div>
     </div>
-
-    <div class="game-window" id="entertainment-page" style="display:none;">
-        <div class="top-bar">
-            <span>Entertainment</span>
-        </div>
-        <div class="entertainment-content">
-            <div class="container main">
-                <div class="board-area">
-                    <table class="board">
-                        <tr>
-                            <td class="space text-center empty" id="space-0"></td>
-                            <td class="space text-center empty" id="space-1"></td>
-                            <td class="space text-center empty" id="space-2"></td>
-                        </tr>
-                        <tr>
-                            <td class="space text-center empty" id="space-3"></td>
-                            <td class="space text-center empty" id="space-4"></td>
-                            <td class="space text-center empty" id="space-5"></td>
-                        </tr>
-                        <tr>
-                            <td class="space text-center empty" id="space-6"></td>
-                            <td class="space text-center empty" id="space-7"></td>
-                            <td class="space text-center empty" id="space-8"></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="selection-area hide-me">
-                    <h3>Play As:</h3>
-                    <button class="btn" id="X">X</button>
-                    <button class="btn" id="O">O</button>
-                </div>
-                <div class="message-area hide-me">
-                    <h3 class="message">You Lose.</h3>
-                    <button class="btn" id="replay">Play Again</button>
-                </div>
-            </div>
-        </div>
-        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
-    </div>
-
-    <div class="game-window" id="property-page" style="display:none;">
-        <div class="top-bar">
-            <span>Property</span>
-        </div>
-        <div class="property-content">
-            <h1>Coming Soon</h1>
-        </div>
-        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
-    <script src="script.js"></script>
+    <div class="overlay-app"></div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
