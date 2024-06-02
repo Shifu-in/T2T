@@ -151,4 +151,114 @@ document.addEventListener("DOMContentLoaded", function() {
     function calculateIncome(upgrade) {
         return upgrade.baseMultiplier * upgrade.level;
     }
+
+    // Tic-Tac-Toe game logic
+    const cells = document.querySelectorAll(".cell");
+    const statusDisplay = document.getElementById("status");
+    const gameBoard = document.getElementById("gameBoard");
+    const startButton = document.getElementById("startButton");
+    const playersSelect = document.getElementById("players");
+
+    let ticTacToeBoard = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameActive = true;
+    let numPlayers = 2;
+
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+
+    const handleCellPlayed = (clickedCell, clickedCellIndex) => {
+        ticTacToeBoard[clickedCellIndex] = currentPlayer;
+        clickedCell.innerHTML = currentPlayer;
+    };
+
+    const handlePlayerChange = () => {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+    };
+
+    const handleResultValidation = () => {
+        let roundWon = false;
+        for (let i = 0; i <= 7; i++) {
+            const winCondition = winningConditions[i];
+            let a = ticTacToeBoard[winCondition[0]];
+            let b = ticTacToeBoard[winCondition[1]];
+            let c = ticTacToeBoard[winCondition[2]];
+            if (a === "" || b === "" || c === "") {
+                continue;
+            }
+            if (a === b && b === c) {
+                roundWon = true;
+                break;
+            }
+        }
+
+        if (roundWon) {
+            statusDisplay.innerHTML = `Player ${currentPlayer} wins!`;
+            gameActive = false;
+            return;
+        }
+
+        let roundDraw = !ticTacToeBoard.includes("");
+        if (roundDraw) {
+            statusDisplay.innerHTML = `Draw!`;
+            gameActive = false;
+            return;
+        }
+
+        handlePlayerChange();
+        if (numPlayers === 0 || (numPlayers === 1 && currentPlayer === "O")) {
+            aiPlay();
+        }
+    };
+
+    const handleCellClick = (clickedCellEvent) => {
+        const clickedCell = clickedCellEvent.target;
+        const clickedCellIndex = parseInt(clickedCell.getAttribute("data-index"));
+
+        if (ticTacToeBoard[clickedCellIndex] !== "" || !gameActive) {
+            return;
+        }
+
+        handleCellPlayed(clickedCell, clickedCellIndex);
+        handleResultValidation();
+    };
+
+    const aiPlay = () => {
+        if (!gameActive) return;
+        let availableCells = ticTacToeBoard
+            .map((cell, index) => (cell === "" ? index : null))
+            .filter((index) => index !== null);
+        let randomIndex =
+            availableCells[Math.floor(Math.random() * availableCells.length)];
+        let aiCell = document.querySelector(`.cell[data-index="${randomIndex}"]`);
+        handleCellPlayed(aiCell, randomIndex);
+        handleResultValidation();
+    };
+
+    const resetGame = () => {
+        ticTacToeBoard = ["", "", "", "", "", "", "", "", ""];
+        currentPlayer = "X";
+        gameActive = true;
+        statusDisplay.innerHTML = "";
+        cells.forEach((cell) => (cell.innerHTML = ""));
+        if (numPlayers === 0 || (numPlayers === 1 && currentPlayer === "O")) {
+            aiPlay();
+        }
+    };
+
+    startButton.addEventListener("click", () => {
+        numPlayers = parseInt(playersSelect.value);
+        gameBoard.classList.remove("hidden");
+        resetGame();
+    });
+
+    cells.forEach((cell) => cell.addEventListener("click", handleCellClick));
 });
