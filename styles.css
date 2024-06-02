@@ -260,4 +260,28 @@ body {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    box-sizing: border
+    box-sizing: border-box;
+    flex: 1;
+    font-size: 1rem;
+}
+        
+.upgrade .upgrade-info ul {
+    padding: 0 0.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.upgrade .upgrade-info .cost {
+    color: lime;
+}
+
+.upgrade .upgrade-info .cost.-disabled {
+    color: red;
+}
+        
+.upgrade .upgrade-info h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
