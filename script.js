@@ -4,15 +4,23 @@ document.addEventListener("DOMContentLoaded", function() {
     const clickEffectsContainer = document.querySelector('#click-effects');
     const profileBalanceElement = document.querySelector('#profile-balance');
     const userIdElement = document.querySelector('#user-id');
+    const usernameElement = document.querySelector('#username');
+
+    const gamingNicknames = [
+        'Gamer123', 'ShadowHunter', 'MysticWarrior', 'StarKnight', 'PixelMaster',
+        'DragonSlayer', 'CosmicRider', 'CyberNinja', 'PhantomAssassin', 'QuantumWizard'
+    ];
 
     // Получаем данные пользователя из локального хранилища
     let balance = Number.parseInt(localStorage.getItem('balance'), 10) || 0;
     let userId = localStorage.getItem('userId') || generateUserId();
+    let username = localStorage.getItem('username') || generateUsername();
 
-    // Отображаем текущий баланс и ID пользователя
+    // Отображаем текущий баланс, ID пользователя и никнейм
     balanceValueElement.textContent = balance;
     profileBalanceElement.textContent = balance;
     userIdElement.textContent = userId;
+    usernameElement.textContent = username;
 
     // Обработчик клика по кнопке
     tapButton.addEventListener('click', function() {
@@ -28,6 +36,16 @@ document.addEventListener("DOMContentLoaded", function() {
         const id = crypto.randomUUID();
         localStorage.setItem('userId', id);
         return id;
+    }
+
+    // Генерация уникального никнейма пользователя
+    function generateUsername() {
+        let username;
+        do {
+            username = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)] + Math.floor(Math.random() * 1000);
+        } while (localStorage.getItem(username) !== null);
+        localStorage.setItem('username', username);
+        return username;
     }
 
     // Показать эффект клика
