@@ -153,111 +153,263 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Tic-Tac-Toe game logic
-    const cells = document.querySelectorAll(".cell");
-    const statusDisplay = document.getElementById("status");
-    const gameBoard = document.getElementById("gameBoard");
-    const startButton = document.getElementById("startButton");
+    let playerSymbol = "";
+    let compSymbol = "";
+    let playerTurn;
 
-    let ticTacToeBoard = ["", "", "", "", "", "", "", "", ""];
-    let currentPlayer = "X";
-    let gameActive = true;
-    let numPlayers = 1;  // Always 1 player
+    const AI = function() {
+        let game = {};
+        let nextMove;
+        this.AISymbol = "";
 
-    const winningConditions = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
+        let _this = this;
 
-    const handleCellPlayed = (clickedCell, clickedCellIndex) => {
-        ticTacToeBoard[clickedCellIndex] = currentPlayer;
-        clickedCell.innerHTML = currentPlayer;
-    };
+        function minimax(state) {
+            if (state.gameOver()) {
+                return Game.score(state);
+            } else {
+                let scores = [];
+                let moves = state.emptyCells();
+                for (let i = 0; i < moves.length; i++) {
+                    let possibleState = new State(state, { turn: state.turn, position: moves[i] });
+                    let currScore = minimax(possibleState);
+                    scores.push(currScore);
+                }
 
-    const handlePlayerChange = () => {
-        currentPlayer = currentPlayer === "X" ? "O" : "X";
-    };
-
-    const handleResultValidation = () => {
-        let roundWon = false;
-        for (let i = 0; i <= 7; i++) {
-            const winCondition = winningConditions[i];
-            let a = ticTacToeBoard[winCondition[0]];
-            let b = ticTacToeBoard[winCondition[1]];
-            let c = ticTacToeBoard[winCondition[2]];
-            if (a === "" || b === "" || c === "") {
-                continue;
-            }
-            if (a === b && b === c) {
-                roundWon = true;
-                break;
+                if (state.turn == "X") {
+                    let max = findMaxIndex(scores);
+                    nextMove = moves[max];
+                    return scores[max];
+                } else {
+                    let min = findMinIndex(scores);
+                    nextMove = moves[min];
+                    return scores[min];
+                }
             }
         }
 
-        if (roundWon) {
-            statusDisplay.innerHTML = `Player ${currentPlayer} wins!`;
-            gameActive = false;
-            return;
+        this.plays = function(_game) {
+            game = _game;
+        };
+
+        this.takeMove = function(_state) {
+            _state.turn = _this.AISymbol;
+            minimax(_state);
+            let newState = new State(_state, { turn: _this.AISymbol, position: nextMove });
+            myGame.advanceTo(newState);
+        }
+    }
+
+    const Game = function(AI) {
+        this.ai = AI;
+        this.currentState = new State();
+        this.currentState.turn = "X";
+        this.status = "start";
+
+        this.advanceTo = function(_state) {
+            this.currentState = _state;
+            this.updateUI();
         }
 
-        let roundDraw = !ticTacToeBoard.includes("");
-        if (roundDraw) {
-            statusDisplay.innerHTML = `Draw!`;
-            gameActive = false;
-            return;
+        this.start = function() {
+            if (this.status = "start") {
+                this.advanceTo(this.currentState);
+                this.status = "running";
+            }
         }
 
-        handlePlayerChange();
-        if (numPlayers === 0 || (numPlayers === 1 && currentPlayer === "O")) {
-            aiPlay();
+        this.updateUI = function() {
+            let board = this.currentState.board;
+            for (let i = 0; i <= 8; i++) {
+                let selector = "#space-" + i;
+                if (board[i]) {
+                    $(selector).html(board[i]);
+                    $(selector).removeClass("empty");
+                } else {
+                    $(selector).html("");
+                    $(selector).addClass("empty");
+                }
+            }
+
+            if (this.currentState.gameOver()) {
+                let message = "";
+                if (this.currentState.result == "draw") {
+                    message = "It's a draw.";
+                } else if (this.currentState.result != playerSymbol) {
+                    message = "You lose!";
+                } else {
+                    message = "You win!";
+                }
+                $(".message").html(message);
+                $(".message-area").fadeIn(600);
+            }
         }
-    };
 
-    const handleCellClick = (clickedCellEvent) => {
-        const clickedCell = clickedCellEvent.target;
-        const clickedCellIndex = parseInt(clickedCell.getAttribute("data-index"));
+        this.isValid = function(space) {
+            return this.currentState.board[space] == 0;
+        }
+    }
 
-        if (ticTacToeBoard[clickedCellIndex] !== "" || !gameActive) {
-            return;
+    Game.score = function(_state) {
+        if (_state.result !== "active") {
+            if (_state.result === "X") {
+                return 10 - _state.depth;
+            } else if (_state.result === "O") {
+                return -10 + _state.depth;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    let State = function(old, move) {
+        this.turn = "";
+        this.depth = 0;
+        this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.result = "active";
+
+        if (old) {
+            for (let i = 0; i <= 8; i++) {
+                this.board[i] = old.board[i];
+            }
+            this.depth = old.depth;
+            this.result = old.result;
+            this.turn = old.turn;
         }
 
-        handleCellPlayed(clickedCell, clickedCellIndex);
-        handleResultValidation();
-    };
-
-    const aiPlay = () => {
-        if (!gameActive) return;
-        let availableCells = ticTacToeBoard
-            .map((cell, index) => (cell === "" ? index : null))
-            .filter((index) => index !== null);
-        let randomIndex =
-            availableCells[Math.floor(Math.random() * availableCells.length)];
-        let aiCell = document.querySelector(`.cell[data-index="${randomIndex}"]`);
-        handleCellPlayed(aiCell, randomIndex);
-        handleResultValidation();
-    };
-
-    const resetGame = () => {
-        ticTacToeBoard = ["", "", "", "", "", "", "", "", ""];
-        currentPlayer = "X";
-        gameActive = true;
-        statusDisplay.innerHTML = "";
-        cells.forEach((cell) => (cell.innerHTML = ""));
-        if (numPlayers === 0 || (numPlayers === 1 && currentPlayer === "O")) {
-            aiPlay();
+        if (move) {
+            this.turn = move.turn;
+            this.board[move.position] = move.turn;
+            if (move.turn === "O") {
+                this.depth++;
+            }
+            this.turn = move.turn == "X" ? "O" : "X";
         }
-    };
 
-    startButton.addEventListener("click", () => {
-        numPlayers = 1;  // Always 1 player
-        gameBoard.classList.remove("hidden");
-        resetGame();
+        this.emptyCells = function() {
+            let indexes = [];
+            for (let i = 0; i < 9; i++) {
+                if (this.board[i] === 0) {
+                    indexes.push(i);
+                }
+            }
+            return indexes;
+        }
+
+        this.gameOver = function() {
+            for (let i = 0; i <= 6; i += 3) {
+                if (this.board[i] !== 0 && this.board[i] === this.board[i + 1] && this.board[i + 1] === this.board[i + 2]) {
+                    this.result = this.board[i];
+                    return true;
+                }
+            }
+
+            for (let i = 0; i <= 2; i++) {
+                if (this.board[i] !== 0 && this.board[i] === this.board[i + 3] && this.board[i + 3] === this.board[i + 6]) {
+                    this.result = this.board[i];
+                    return true;
+                }
+            }
+
+            if (this.board[4] !== 0 && (((this.board[0] === this.board[4]) && (this.board[4] === this.board[8])) || 
+                                        ((this.board[2] === this.board[4]) && (this.board[4] === this.board[6])))) {
+                this.result = this.board[4];
+                return true;
+            }
+
+            let available = this.emptyCells();
+            if (available[0] == undefined) {
+                this.result = "draw";
+                return true;
+            } else {
+                return false;
+            }
+        };
+    }
+
+    let findMaxIndex = function(arr) {
+        let indexOfMax = 0;
+        let max = 0;
+        if (arr.length > 1) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] >= max) {
+                    indexOfMax = i;
+                    max = arr[i];
+                }
+            }
+        }
+        return indexOfMax;
+    }
+
+    let findMinIndex = function(arr) {
+        let indexOfMin = 0;
+        let min = 0;
+        if (arr.length > 1) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] <= min) {
+                    indexOfMin = i;
+                    min = arr[i];
+                }
+            }
+        }
+        return indexOfMin;
+    }
+
+    let myAI = new AI();
+    let myGame = new Game(myAI);
+    myAI.plays(myGame);
+
+    $(".selection-area .btn").on("click", function() {
+        playerSymbol = $(this).attr("id");
+
+        if (playerSymbol == "X") {
+            compSymbol = "O";
+            playerTurn = true;
+        } else {
+            compSymbol = "X";
+            playerTurn = false;
+        }
+
+        playGame();
     });
 
-    cells.forEach((cell) => cell.addEventListener("click", handleCellClick));
+    let playGame = function() {
+        myAI = new AI();
+        myGame = new Game(myAI);
+        myAI.plays(myGame);
+
+        myGame.updateUI();
+
+        myAI.AISymbol = compSymbol;
+        Game.prototype.playerSymbol = playerSymbol;
+
+        $(".hide-me").fadeOut(600).promise().done(function() {
+            $(".board-area").fadeIn(600, function() {
+                if (myAI.AISymbol == "X") {
+                    myGame.ai.takeMove(myGame.currentState);
+                    myGame.updateUI();
+                    playerTurn = true;
+                }
+            });
+        });
+    }
+
+    $(".space").on("click", function() {
+        let num = $(this).attr("id");
+        num = num.substr(6, 6);
+        if (playerTurn && myGame.isValid(num)) {
+            let newState = new State(myGame.currentState, { turn: playerSymbol, position: num });
+            myGame.advanceTo(newState);
+            myGame.updateUI();
+            playerTurn = false;
+
+            setTimeout(function() {
+                myGame.ai.takeMove(myGame.currentState);
+                myGame.updateUI();
+                playerTurn = true;
+            }, 1000);
+        }
+    });
+
+    $("#replay").on("click", playGame);
 });
