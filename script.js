@@ -47,4 +47,30 @@ document.addEventListener("DOMContentLoaded", function() {
         do {
             const namePart1 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
             const namePart2 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
-            username = `${namePart1}${namePart
+            username = `${namePart1}${namePart2}`;
+        } while (localStorage.getItem(username) !== null);
+        localStorage.setItem('username', username);
+        return username;
+    }
+
+    // Показать эффект клика
+    function showClickEffect() {
+        const clickEffect = document.createElement('div');
+        clickEffect.classList.add('click-effect');
+        clickEffect.textContent = '+1';
+        clickEffectsContainer.appendChild(clickEffect);
+
+        setTimeout(() => {
+            clickEffectsContainer.removeChild(clickEffect);
+        }, 500);
+    }
+
+    // Навигация между страницами
+    window.navigateTo = function(page) {
+        document.querySelectorAll('.game-window').forEach(div => div.style.display = 'none');
+        document.getElementById(`${page}-page`).style.display = 'flex';
+    }
+
+    // Инициализация начальной страницы
+    navigateTo('main');
+});
