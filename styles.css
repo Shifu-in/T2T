@@ -319,4 +319,68 @@ body {
 }
 
 .partner .nav-button {
-    margin
+    margin: 0.5rem;
+}
+
+/* Added CSS for entertainment section */
+.entertainment-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #0a1a2b;
+    padding: 1rem;
+}
+
+.entertainment-content h1 {
+    margin-bottom: 20px;
+}
+
+#gameMode {
+    margin-bottom: 20px;
+}
+
+#gameBoard {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+#status {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+/* Added CSS for property section */
+.property-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #0a1a2b;
+    padding: 1rem;
+}
+
+.property-content h1 {
+    color: white;
+}
