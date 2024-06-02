@@ -7,8 +7,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const usernameElement = document.querySelector('#username');
 
     const gamingNicknames = [
-        'Gamer123', 'ShadowHunter', 'MysticWarrior', 'StarKnight', 'PixelMaster',
-        'DragonSlayer', 'CosmicRider', 'CyberNinja', 'PhantomAssassin', 'QuantumWizard'
+        'ShadowHunter', 'MysticWarrior', 'StarKnight', 'PixelMaster', 'DragonSlayer',
+        'CosmicRider', 'CyberNinja', 'PhantomAssassin', 'QuantumWizard', 'StarGazer',
+        'NightStalker', 'MoonWalker', 'SpaceVoyager', 'GalacticHero', 'ThunderFist',
+        'IronBlade', 'StormBringer', 'FireMage', 'IceSorcerer', 'WindRanger',
+        'DarkAvenger', 'LightGuardian', 'SilentShadow', 'MysticSeer', 'ArcaneKnight'
     ];
 
     // Получаем данные пользователя из локального хранилища
@@ -42,30 +45,6 @@ document.addEventListener("DOMContentLoaded", function() {
     function generateUsername() {
         let username;
         do {
-            username = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)] + Math.floor(Math.random() * 1000);
-        } while (localStorage.getItem(username) !== null);
-        localStorage.setItem('username', username);
-        return username;
-    }
-
-    // Показать эффект клика
-    function showClickEffect() {
-        const clickEffect = document.createElement('div');
-        clickEffect.classList.add('click-effect');
-        clickEffect.textContent = '+1';
-        clickEffectsContainer.appendChild(clickEffect);
-
-        setTimeout(() => {
-            clickEffectsContainer.removeChild(clickEffect);
-        }, 500);
-    }
-
-    // Навигация между страницами
-    window.navigateTo = function(page) {
-        document.querySelectorAll('.game-window').forEach(div => div.style.display = 'none');
-        document.getElementById(`${page}-page`).style.display = 'flex';
-    }
-
-    // Инициализация начальной страницы
-    navigateTo('main');
-});
+            const namePart1 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
+            const namePart2 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
+            username = `${namePart1}${namePart
