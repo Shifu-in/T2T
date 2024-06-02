@@ -47,11 +47,18 @@
             <span>Store</span>
         </div>
         <div class="store-content">
-            <p>Upgrades and items will be available here.</p>
+            <div class="info">
+                Auto-rate: <span id="auto-rate">0</span> Energy/sec
+            </div>
+            <div class="upgrade-list" id="upgrade-list">
+                <!-- Upgrades will be rendered here -->
+            </div>
             <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
