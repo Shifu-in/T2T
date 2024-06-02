@@ -89,8 +89,8 @@ document.addEventListener("DOMContentLoaded", function() {
     function getDefaultUpgrades() {
         return {
             CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 50, costIncrement: 1.15, maxLevel: 10 },
-            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 0, level: 0, cost: 300, costIncrement: 1.15, maxLevel: 10 },
-            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 0, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
+            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 1, level: 0, cost: 300, costIncrement: 1.15, maxLevel: 10 },
+            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 2, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
             ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
             DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
             NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10, unavailable: true, isResourceMultiplier: true }
@@ -121,8 +121,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (key === 'CLICK_MULTIPLIER') {
                         tapPower += upgrade.baseMultiplier;
                         localStorage.setItem('tapPower', tapPower);
-                    } else if (upgrade.baseMultiplier) {
-                        upgrade.baseMultiplier += 1;
                     }
                     localStorage.setItem('balance', balance);
                     localStorage.setItem('upgrades', JSON.stringify(upgrades));
