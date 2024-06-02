@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let userId = localStorage.getItem('userId') || generateUserId();
     let username = localStorage.getItem('username') || generateUsername();
     let upgrades = JSON.parse(localStorage.getItem('upgrades')) || getDefaultUpgrades();
+    let tapPower = Number.parseInt(localStorage.getItem('tapPower'), 10) || 1;
     let autoRate = calculateAutoRate(upgrades);
 
     // Отображаем текущий баланс, ID пользователя, никнейм и авто-ставку
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Обработчик клика по кнопке
     tapButton.addEventListener('click', function() {
-        balance += 1;
+        balance += tapPower;
         balanceValueElement.textContent = balance;
         profileBalanceElement.textContent = balance;
         localStorage.setItem('balance', balance);
@@ -64,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function showClickEffect() {
         const clickEffect = document.createElement('div');
         clickEffect.classList.add('click-effect');
-        clickEffect.textContent = '+1';
+        clickEffect.textContent = `+${tapPower}`;
         clickEffectsContainer.appendChild(clickEffect);
 
         setTimeout(() => {
@@ -114,7 +115,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     balance -= upgrade.cost;
                     upgrade.level += 1;
                     upgrade.cost = Math.floor(upgrade.cost * upgrade.costIncrement);
-                    if (upgrade.baseMultiplier) {
+                    if (key === 'CLICK_MULTIPLIER') {
+                        tapPower += upgrade.baseMultiplier;
+                        localStorage.setItem('tapPower', tapPower);
+                    } else if (upgrade.baseMultiplier) {
                         upgrade.baseMultiplier += 1;
                     }
                     localStorage.setItem('balance', balance);
