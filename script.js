@@ -93,7 +93,8 @@ document.addEventListener("DOMContentLoaded", function() {
             VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 2, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
             ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
             DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 0, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10, isResourceMultiplier: true },
-            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10, unavailable: true, isResourceMultiplier: true }
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 0, level
+: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10, unavailable: true, isResourceMultiplier: true }
         };
     }
 
@@ -121,12 +122,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (key === 'CLICK_MULTIPLIER') {
                         tapPower += upgrade.baseMultiplier;
                         localStorage.setItem('tapPower', tapPower);
+                    } else {
+                        autoRate += upgrade.baseMultiplier; // Увеличиваем autoRate
                     }
                     localStorage.setItem('balance', balance);
                     localStorage.setItem('upgrades', JSON.stringify(upgrades));
                     balanceValueElement.textContent = balance;
                     profileBalanceElement.textContent = balance;
-                    autoRate = calculateAutoRate(upgrades);
                     autoRateElement.textContent = autoRate;
                     renderUpgrades(upgrades);
                     upgradeDiv.classList.add('active'); // Добавляем класс выделения
@@ -142,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function calculateAutoRate(upgrades) {
         let autoRate = 0;
         for (const upgrade of Object.values(upgrades)) {
-            if (upgrade.baseMultiplier && !upgrade.isResourceMultiplier) {
+            if (!upgrade.isResourceMultiplier) {
                 autoRate += upgrade.baseMultiplier * upgrade.level;
             }
         }
@@ -150,6 +152,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function calculateIncome(upgrade) {
+        if (upgrade.isResourceMultiplier) {
+            return 0;
+        }
         return upgrade.baseMultiplier * upgrade.level;
     }
 });
