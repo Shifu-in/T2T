@@ -1,415 +1,256 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const balanceValueElement = document.querySelector('#balance-value');
-    const tapButton = document.querySelector('#tap-button');
-    const clickEffectsContainer = document.querySelector('#click-effects');
-    const profileBalanceElement = document.querySelector('#profile-balance');
-    const userIdElement = document.querySelector('#user-id');
-    const usernameElement = document.querySelector('#username');
-    const autoRateElement = document.querySelector('#auto-rate');
-    const upgradeListElement = document.querySelector('#upgrade-list');
+// object to represent a possible game state. Will be used for traversal by the minimax AI.
+let State = function (old, move) {
+    // whose turn is it?
+    this.turn = "X";
 
-    const gamingNicknames = [
-        'ShadowHunter', 'MysticWarrior', 'StarKnight', 'PixelMaster', 'DragonSlayer',
-        'CosmicRider', 'CyberNinja', 'PhantomAssassin', 'QuantumWizard', 'StarGazer',
-        'NightStalker', 'MoonWalker', 'SpaceVoyager', 'GalacticHero', 'ThunderFist',
-        'IronBlade', 'StormBringer', 'FireMage', 'IceSorcerer', 'WindRanger',
-        'DarkAvenger', 'LightGuardian', 'SilentShadow', 'MysticSeer', 'ArcaneKnight'
-    ];
+    // number of AI moves so far - used by the minmax algorithm
+    this.depth = 0;
 
-    let balance = Number.parseInt(localStorage.getItem('balance'), 10) || 0;
-    let userId = localStorage.getItem('userId') || generateUserId();
-    let username = localStorage.getItem('username') || generateUsername();
-    let upgrades = JSON.parse(localStorage.getItem('upgrades')) || getDefaultUpgrades();
-    let tapPower = Number.parseInt(localStorage.getItem('tapPower'), 10) || 1;
-    let autoRate = calculateAutoRate(upgrades);
+    // current representation of board
+    // 0 = blank space
+    this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-    balanceValueElement.textContent = balance;
-    profileBalanceElement.textContent = balance;
-    userIdElement.textContent = userId;
-    usernameElement.textContent = username;
-    autoRateElement.textContent = autoRate;
+    // current status of the game
+    this.result = "active";
 
-    renderUpgrades(upgrades);
-
-    tapButton.addEventListener('click', function() {
-        balance += tapPower;
-        updateBalance(balance);
-        showClickEffect(tapPower);
-    });
-
-    function generateUserId() {
-        const id = crypto.randomUUID();
-        localStorage.setItem('userId', id);
-        return id;
-    }
-
-    function generateUsername() {
-        let username;
-        do {
-            const namePart1 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
-            const namePart2 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
-            username = `${namePart1}${namePart2}`;
-        } while (username.length > 30 || localStorage.getItem(username) !== null);
-        localStorage.setItem('username', username);
-        return username;
-    }
-
-    function showClickEffect(value) {
-        const clickEffect = document.createElement('div');
-        clickEffect.classList.add('click-effect');
-        clickEffect.textContent = `+${value}`;
-        clickEffectsContainer.appendChild(clickEffect);
-
-        setTimeout(() => {
-            clickEffectsContainer.removeChild(clickEffect);
-        }, 500);
-    }
-
-    window.navigateTo = function(page) {
-        document.querySelectorAll('.game-window').forEach(div => div.style.display = 'none');
-        document.getElementById(`${page}-page`).style.display = 'flex';
-    }
-
-    navigateTo('main');
-
-    function updateBalance(newBalance) {
-        balance = newBalance;
-        balanceValueElement.textContent = balance;
-        profileBalanceElement.textContent = balance;
-        localStorage.setItem('balance', balance);
-    }
-
-    function autoIncrement() {
-        balance += autoRate;
-        updateBalance(balance);
-    }
-    
-    setInterval(autoIncrement, 1000);
-
-    function getDefaultUpgrades() {
-        return {
-            CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 50, costIncrement: 1.15, maxLevel: 10 },
-            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 1, level: 0, cost: 300, costIncrement: 1.15, maxLevel: 10 },
-            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 2, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
-            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 5, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10 },
-            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 10, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10 },
-            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 20, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10 }
-        };
-    }
-
-    function renderUpgrades(upgrades) {
-        upgradeListElement.innerHTML = '';
-        for (const [key, upgrade] of Object.entries(upgrades)) {
-            const upgradeDiv = document.createElement('div');
-            upgradeDiv.className = `upgrade ${balance < upgrade.cost || upgrade.level >= upgrade.maxLevel ? "-disabled" : ''}`;
-            upgradeDiv.innerHTML = `
-                <div class="upgrade-img"></div>
-                <div class="upgrade-info">
-                    <h2>${upgrade.displayName}</h2>
-                    <ul>
-                        <li>Lv. ${upgrade.level}</li>
-                        <li class="cost ${balance < upgrade.cost ? '-disabled' : ''}">${upgrade.cost}</li>
-                        <li class="income">Income: ${calculateIncome(upgrade)} Energy/sec</li>
-                    </ul>
-                </div>
-            `;
-            upgradeDiv.onclick = () => {
-                if (balance >= upgrade.cost && !upgrade.unavailable && upgrade.level < upgrade.maxLevel) {
-                    balance -= upgrade.cost;
-                    upgrade.level += 1;
-                    upgrade.cost = Math.floor(upgrade.cost * upgrade.costIncrement);
-                    if (key === 'CLICK_MULTIPLIER') {
-                        tapPower += upgrade.baseMultiplier;
-                        localStorage.setItem('tapPower', tapPower);
-                    } else {
-                        autoRate += upgrade.baseMultiplier;
-                    }
-                    localStorage.setItem('balance', balance);
-                    localStorage.setItem('upgrades', JSON.stringify(upgrades));
-                    balanceValueElement.textContent = balance;
-                    profileBalanceElement.textContent = balance;
-                    autoRateElement.textContent = autoRate;
-                    renderUpgrades(upgrades);
-                    upgradeDiv.classList.add('active');
-                    setTimeout(() => {
-                        upgradeDiv.classList.remove('active');
-                    }, 200);
-                }
-            };
-            upgradeListElement.appendChild(upgradeDiv);
+    // if old state has been passed in to generate this state, copy the state over.
+    if (old) {
+        for (let i = 0; i <= 8; i++) {
+            this.board[i] = old.board[i];
         }
+        this.depth = old.depth;
+        this.result = old.result;
+        this.turn = old.turn;
     }
 
-    function calculateAutoRate(upgrades) {
-        let autoRate = 0;
-        for (const upgrade of Object.values(upgrades)) {
-            autoRate += upgrade.baseMultiplier * upgrade.level;
+    //if there's a move object, advance the turn to that move's turn and place it at the specified position
+    if (move) {
+        this.turn = move.turn;
+        this.board[move.position] = move.turn;
+
+        if (move.turn === "O") {
+            this.depth++;
         }
-        return autoRate;
+
+        this.turn = move.turn == "X" ? "O" : "X";
     }
 
-    function calculateIncome(upgrade) {
-        return upgrade.baseMultiplier * upgrade.level;
-    }
-
-    // Tic-Tac-Toe game logic
-    let playerSymbol = "";
-    let compSymbol = "";
-    let playerTurn;
-
-    const AI = function() {
-        let game = {};
-        let nextMove;
-        this.AISymbol = "";
-
-        let _this = this;
-
-        function minimax(state) {
-            if (state.gameOver()) {
-                return Game.score(state);
-            } else {
-                let scores = [];
-                let moves = state.emptyCells();
-                for (let i = 0; i < moves.length; i++) {
-                    let possibleState = new State(state, { turn: state.turn, position: moves[i] });
-                    let currScore = minimax(possibleState);
-                    scores.push(currScore);
-                }
-
-                if (state.turn == "X") {
-                    let max = findMaxIndex(scores);
-                    nextMove = moves[max];
-                    return scores[max];
-                } else {
-                    let min = findMinIndex(scores);
-                    nextMove = moves[min];
-                    return scores[min];
-                }
+    // find all empty cells in the state and return them
+    this.emptyCells = function () {
+        let indexes = [];
+        for (let i = 0; i < 9; i++) {
+            if (this.board[i] === 0) {
+                indexes.push(i);
             }
         }
+        return indexes;
+    };
 
-        this.plays = function(_game) {
-            game = _game;
-        };
-
-        this.takeMove = function(_state) {
-            _state.turn = _this.AISymbol;
-            minimax(_state);
-            let newState = new State(_state, { turn: _this.AISymbol, position: nextMove });
-            myGame.advanceTo(newState);
-        }
-    }
-
-    const Game = function(AI) {
-        this.ai = AI;
-        this.currentState = new State();
-        this.currentState.turn = "X";
-        this.status = "start";
-
-        this.advanceTo = function(_state) {
-            this.currentState = _state;
-            this.updateUI();
-        }
-
-        this.start = function() {
-            if (this.status = "start") {
-                this.advanceTo(this.currentState);
-                this.status = "running";
-            }
-        }
-
-        this.updateUI = function() {
-            let board = this.currentState.board;
-            for (let i = 0; i <= 8; i++) {
-                let selector = "#space-" + i;
-                if (board[i]) {
-                    document.querySelector(selector).innerHTML = board[i];
-                    document.querySelector(selector).classList.remove("empty");
-                } else {
-                    document.querySelector(selector).innerHTML = "";
-                    document.querySelector(selector).classList.add("empty");
-                }
-            }
-
-            if (this.currentState.gameOver()) {
-                let message = "";
-                if (this.currentState.result == "draw") {
-                    message = "It's a draw.";
-                } else if (this.currentState.result != playerSymbol) {
-                    message = "You lose!";
-                } else {
-                    message = "You win!";
-                }
-                document.querySelector(".message").innerHTML = message;
-                document.querySelector(".message-area").style.display = 'block';
-            }
-        }
-
-        this.isValid = function(space) {
-            return this.currentState.board[space] == 0;
-        }
-    }
-
-    Game.score = function(_state) {
-        if (_state.result !== "active") {
-            if (_state.result === "X") {
-                return 10 - _state.depth;
-            } else if (_state.result === "O") {
-                return -10 + _state.depth;
-            } else {
-                return 0;
-            }
-        }
-    }
-
-    let State = function(old, move) {
-        this.turn = "";
-        this.depth = 0;
-        this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        this.result = "active";
-
-        if (old) {
-            for (let i = 0; i <= 8; i++) {
-                this.board[i] = old.board[i];
-            }
-            this.depth = old.depth;
-            this.result = old.result;
-            this.turn = old.turn;
-        }
-
-        if (move) {
-            this.turn = move.turn;
-            this.board[move.position] = move.turn;
-            if (move.turn === "O") {
-                this.depth++;
-            }
-            this.turn = move.turn == "X" ? "O" : "X";
-        }
-
-        this.emptyCells = function() {
-            let indexes = [];
-            for (let i = 0; i < 9; i++) {
-                if (this.board[i] === 0) {
-                    indexes.push(i);
-                }
-            }
-            return indexes;
-        }
-
-        this.gameOver = function() {
-            for (let i = 0; i <= 6; i += 3) {
-                if (this.board[i] !== 0 && this.board[i] === this.board[i + 1] && this.board[i + 1] === this.board[i + 2]) {
-                    this.result = this.board[i];
-                    return true;
-                }
-            }
-
-            for (let i = 0; i <= 2; i++) {
-                if (this.board[i] !== 0 && this.board[i] === this.board[i + 3] && this.board[i + 3] === this.board[i + 6]) {
-                    this.result = this.board[i];
-                    return true;
-                }
-            }
-
-            if (this.board[4] !== 0 && (((this.board[0] === this.board[4]) && (this.board[4] === this.board[8])) || 
-                                        ((this.board[2] === this.board[4]) && (this.board[4] === this.board[6])))) {
-                this.result = this.board[4];
+    // check if the game is over.
+    // return true if the game is over.
+    this.gameOver = function () {
+        // check horizontally
+        for (let i = 0; i <= 6; i += 3) {
+            if (this.board[i] !== 0 && this.board[i] === this.board[i + 1] && this.board[i + 1] === this.board[i + 2]) {
+                this.result = this.board[i];
                 return true;
             }
+        }
 
-            let available = this.emptyCells();
-            if (available[0] == undefined) {
-                this.result = "draw";
+        // check vertically
+        for (let i = 0; i <= 2; i++) {
+            if (this.board[i] !== 0 && this.board[i] === this.board[i + 3] && this.board[i + 3] === this.board[i + 6]) {
+                this.result = this.board[i];
                 return true;
+            }
+        }
+
+        // check diagonally
+        if (
+            this.board[4] !== 0 &&
+            ((this.board[0] === this.board[4] && this.board[4] === this.board[8]) ||
+                (this.board[2] === this.board[4] && this.board[4] === this.board[6]))
+        ) {
+            this.result = this.board[4];
+            return true;
+        }
+
+        //if none of the win checks are met, check for a draw.
+        let available = this.emptyCells();
+        if (available[0] == undefined) {
+            this.result = "draw";
+            return true;
+        } else {
+            return false;
+        }
+    };
+};
+
+// unbeatable AI, original minimax algorithm adapted from Mostafa Samir:
+// https://mostafa-samir.github.io/Tic-Tac-Toe-AI/
+let AI = function () {
+    //current game being played by the AI.
+    let game = {};
+
+    // "global" variable used to store the next move, determined by the recursive minmax function
+    let nextMove;
+
+    // initialize the AI's symbol. This will be defined via the UI.
+    this.AISymbol = "O";
+
+    // for scoping
+    let _this = this;
+
+    // minimax function to determine the best move.
+    function minimax(state) {
+        // if this particular state is a finished game, return the score of the current board.
+        if (state.gameOver()) {
+            return Game.score(state);
+        } else {
+            //store all scores (index will correspond to the second array of moves)
+            var scores = [];
+            var moves = state.emptyCells();
+
+            //calculate the minmax value for every possible move.
+            for (let i = 0; i < moves.length; i++) {
+                //the next turn for the possible state will be whoever is not currently in this state.
+                //let nextTurn = state.turn == "X" ? "O" : "X";
+
+                //create a possible state for every possible move
+                let possibleState = new State(state, { turn: state.turn, position: moves[i] });
+
+                //push that state's score
+                let currScore = minimax(possibleState);
+
+                scores.push(currScore);
+            }
+
+            //TODO - replace with player/computer value
+            if (state.turn == "X") {
+                // if it's the player's turn, find the maximum value.
+                let max = findMaxIndex(scores);
+                // store the move to be executed
+                nextMove = moves[max];
+
+                // return the maximum score
+                return scores[max];
             } else {
-                return false;
-            }
-        };
-    }
+                // if it's the player's turn, find the maximum value.
+                let min = findMinIndex(scores);
 
-    let findMaxIndex = function(arr) {
-        let indexOfMax = 0;
-        let max = 0;
-        if (arr.length > 1) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i] >= max) {
-                    indexOfMax = i;
-                    max = arr[i];
-                }
+                // store the move to be executed
+                nextMove = moves[min];
+
+                // return the minimum score
+                return scores[min];
             }
         }
-        return indexOfMax;
     }
 
-    let findMinIndex = function(arr) {
-        let indexOfMin = 0;
-        let min = 0;
-        if (arr.length > 1) {
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i] <= min) {
-                    indexOfMin = i;
-                    min = arr[i];
-                }
+    this.plays = function (_game) {
+        game = _game;
+    };
+
+    this.takeMove = function (_state) {
+        // call the minimax function to determine best move.
+        _state.turn = _this.AISymbol;
+        minimax(_state);
+
+        let newState = new State(_state, { turn: _this.AISymbol, position: nextMove });
+        myGame.advanceTo(newState);
+    };
+};
+
+//game object
+let Game = function (AI) {
+    // initialize the AI
+    this.ai = AI;
+
+    // initialize the game state
+    this.currentState = new State();
+    this.currentState.turn = "X";
+
+    // start game
+    this.status = "start";
+
+    // function to advance game to a new state
+    this.advanceTo = function (_state) {
+        this.currentState = _state;
+    };
+
+    // function to start the game
+    this.start = function () {
+        if ((this.status = "start")) {
+            this.advanceTo(this.currentState);
+            this.status = "running";
+        }
+    };
+};
+
+// initialize AI object
+var myAI = new AI();
+
+let myGame = new Game(myAI);
+myAI.plays(myGame);
+
+// function to determine the score of a game state
+Game.score = function (_state) {
+    if (_state.result === "X") {
+        return 10 - _state.depth;
+    } else if (_state.result === "O") {
+        return -10 + _state.depth;
+    } else {
+        return 0;
+    }
+};
+
+window.onload = function () {
+    let spaces = document.querySelectorAll(".space");
+
+    //initialize game state
+    myGame.start();
+
+    //on click, set the state to X and advance the state
+    for (let i = 0; i < spaces.length; i++) {
+        spaces[i].addEventListener("click", function (e) {
+            let index = e.target.id.split("-")[1];
+            let move = new State(myGame.currentState, { turn: "X", position: index });
+            myGame.advanceTo(move);
+
+            //call the AI to take a move
+            myAI.takeMove(myGame.currentState);
+
+            render();
+        });
+    }
+
+    //render the game state to the screen
+    function render() {
+        for (let i = 0; i < spaces.length; i++) {
+            if (myGame.currentState.board[i] === 0) {
+                spaces[i].innerText = "";
+            } else {
+                spaces[i].innerText = myGame.currentState.board[i];
             }
         }
-        return indexOfMin;
+
+        if (myGame.currentState.result !== "active") {
+            document.querySelector(".message-area").classList.remove("hide-me");
+            document.querySelector(".message").innerText =
+                myGame.currentState.result == "draw" ? "It's a Draw." : myGame.currentState.result + " wins.";
+        }
     }
 
-    let myAI = new AI();
-    let myGame = new Game(myAI);
-    myAI.plays(myGame);
-
-    document.querySelector(".selection-area .btn#X").addEventListener('click', function() {
-        playerSymbol = "X";
-        compSymbol = "O";
-        playerTurn = true;
-        playGame();
-    });
-
-    document.querySelector(".selection-area .btn#O").addEventListener('click', function() {
-        playerSymbol = "O";
-        compSymbol = "X";
-        playerTurn = false;
-        playGame();
-    });
-
-    let playGame = function() {
-        myAI = new AI();
+    document.querySelector("#replay").addEventListener("click", function () {
         myGame = new Game(myAI);
         myAI.plays(myGame);
-
-        myGame.updateUI();
-
-        myAI.AISymbol = compSymbol;
-        Game.prototype.playerSymbol = playerSymbol;
-
-        document.querySelector(".hide-me").style.display = 'none';
-        document.querySelector(".board-area").style.display = 'block';
-
-        if (myAI.AISymbol == "X") {
-            myGame.ai.takeMove(myGame.currentState);
-            myGame.updateUI();
-            playerTurn = true;
-        }
-    }
-
-    document.querySelectorAll(".space").forEach(cell => {
-        cell.addEventListener('click', function() {
-            let num = this.getAttribute('id').substr(6, 6);
-            if (playerTurn && myGame.isValid(num)) {
-                let newState = new State(myGame.currentState, { turn: playerSymbol, position: num });
-                myGame.advanceTo(newState);
-                myGame.updateUI();
-                playerTurn = false;
-
-                setTimeout(function() {
-                    myGame.ai.takeMove(myGame.currentState);
-                    myGame.updateUI();
-                    playerTurn = true;
-                }, 1000);
-            }
-        });
+        myGame.start();
+        render();
+        document.querySelector(".message-area").classList.add("hide-me");
     });
 
-    document.querySelector("#replay").addEventListener('click', playGame);
-});
+    document.querySelector("#startGame").addEventListener("click", function () {
+        document.querySelector(".board-area").classList.remove("hide-me");
+        document.querySelector(".message-area").classList.add("hide-me");
+    });
+};
