@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
             upgradeDiv.className = `upgrade ${balance < upgrade.cost || upgrade.level >= upgrade.maxLevel ? "-disabled" : ''}`;
             upgradeDiv.innerHTML = `
                 <div class="upgrade-icon">
-                    <img src="assets/images/Gem.png" alt="${upgrade.displayName}">
+                    <img src="https://raw.githubusercontent.com/yourusername/yourrepository/main/Gem.png" alt="${upgrade.displayName}">
                 </div>
                 <div class="upgrade-info">
                     <h2>${upgrade.displayName}</h2>
