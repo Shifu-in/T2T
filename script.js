@@ -414,4 +414,30 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.querySelector("#replay").addEventListener('click', playGame);
+
+    window.exportUserData = function() {
+        const userData = {
+            userId: userId,
+            username: username,
+            balance: balance,
+            upgrades: upgrades,
+            tapPower: tapPower,
+            autoRate: autoRate
+        };
+
+        const userDataStr = JSON.stringify(userData, null, 2);
+        const blob = new Blob([userDataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `user_data_${userId}.json`;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
 });
