@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Функция экспорта данных пользователя
     window.exportUserData = function() {
         // Уникальный идентификатор вашего пользователя
-        const adminUserId = 'ваш-уникальный-userId';
+        const adminUserId = '802d237f-1bcc-4d49-ad8c-6873ba7ff0c5';
         
         // Проверяем, является ли текущий пользователь администратором
         if (userId === adminUserId) {
@@ -451,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // Динамическое добавление кнопки "Export User Data" для администратора
-    if (userId === 'ваш-уникальный-userId') {
+    if (userId === '802d237f-1bcc-4d49-ad8c-6873ba7ff0c5') {
         const exportButton = document.createElement('button');
         exportButton.className = 'nav-button';
         exportButton.textContent = 'Export User Data';
