@@ -158,9 +158,17 @@ body {
 }
 
 .nav-button {
-    background: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #3dffe5;
     border: none;
+    border-radius: 0.5rem;
     cursor: pointer;
+    color: #071521;
+}
+
+.nav-button:hover {
+    background-color: #2bccb5;
 }
 
 .profile-content,
@@ -184,7 +192,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    background-image: url('assets/images/tablet.svg');
+    background-image: url('https://raw.githubusercontent.com/JdyL/img-host/e622701c56ca30f2dc0fca8760dd9a5fa03b5b53/svg/space-clicker/tablet.svg');
     background-repeat: no-repeat;
     background-size: cover;
     box-sizing: border-box;
