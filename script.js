@@ -38,6 +38,13 @@ document.addEventListener("DOMContentLoaded", function() {
         saveUserData();
     });
 
+    document.querySelectorAll('.nav-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const page = this.getAttribute('onclick').split('\'')[1];
+            navigateTo(page);
+        });
+    });
+
     function generateUserId() {
         const id = crypto.randomUUID();
         localStorage.setItem('userId', id);
