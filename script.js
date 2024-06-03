@@ -103,7 +103,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const upgradeDiv = document.createElement('div');
             upgradeDiv.className = `upgrade ${balance < upgrade.cost || upgrade.level >= upgrade.maxLevel ? "-disabled" : ''}`;
             upgradeDiv.innerHTML = `
-                <div class="upgrade-img"></div>
+                <div class="upgrade-icon">
+                    <img src="assets/images/Gem.png" alt="${upgrade.displayName}">
+                </div>
                 <div class="upgrade-info">
                     <h2>${upgrade.displayName}</h2>
                     <ul>
