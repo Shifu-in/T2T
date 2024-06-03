@@ -192,9 +192,6 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    background-image: url('https://raw.githubusercontent.com/JdyL/img-host/e622701c56ca30f2dc0fca8760dd9a5fa03b5b53/svg/space-clicker/tablet.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
     box-sizing: border-box;
     padding: 20vh 20vh 5vh 20vh;
     align-items: flex-start;
@@ -226,7 +223,6 @@ body {
     border-radius: 0.2rem;
     margin-bottom: 1vh;
     user-select: none;
-    border: 3px solid #3dffe5;
     padding: 1rem;
 }
 
