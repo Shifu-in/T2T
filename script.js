@@ -415,29 +415,47 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.querySelector("#replay").addEventListener('click', playGame);
 
+    // Функция экспорта данных пользователя
     window.exportUserData = function() {
-        const userData = {
-            userId: userId,
-            username: username,
-            balance: balance,
-            upgrades: upgrades,
-            tapPower: tapPower,
-            autoRate: autoRate
-        };
+        // Уникальный идентификатор вашего пользователя
+        const adminUserId = 'ваш-уникальный-userId';
+        
+        // Проверяем, является ли текущий пользователь администратором
+        if (userId === adminUserId) {
+            const userData = {
+                userId: userId,
+                username: username,
+                balance: balance,
+                upgrades: upgrades,
+                tapPower: tapPower,
+                autoRate: autoRate
+            };
 
-        const userDataStr = JSON.stringify(userData, null, 2);
-        const blob = new Blob([userDataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
+            const userDataStr = JSON.stringify(userData, null, 2);
+            const blob = new Blob([userDataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `user_data_${userId}.json`;
-        document.body.appendChild(a);
-        a.click();
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `user_data_${userId}.json`;
+            document.body.appendChild(a);
+            a.click();
 
-        setTimeout(() => {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 0);
+        } else {
+            alert('You do not have permission to export user data.');
+        }
+    };
+
+    // Динамическое добавление кнопки "Export User Data" для администратора
+    if (userId === 'ваш-уникальный-userId') {
+        const exportButton = document.createElement('button');
+        exportButton.className = 'nav-button';
+        exportButton.textContent = 'Export User Data';
+        exportButton.onclick = exportUserData;
+        document.querySelector('.profile-content').appendChild(exportButton);
     }
 });
