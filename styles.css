@@ -211,31 +211,31 @@ body {
 
 .upgrade-list { 
     display: flex;
-    flex-direction: row;
-    flex: 1;
-    height: 100%;
+    flex-direction: column;
     width: 100%;
-    flex-wrap: wrap;
 }
 
 .upgrade {
     display: flex;
-    flex-direction: column;
-    box-sizing: box-border;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
     transition: 0.2s;
     cursor: pointer;
     color: white;
     border-radius: 0.2rem;
     margin-bottom: 1vh;
     user-select: none;
-    flex: 1;
     border: 3px solid #3dffe5;
+    padding: 1rem;
 }
 
-.upgrade:not(:last-child){
+.upgrade-icon {
+    width: 50px;
+    height: 50px;
     margin-right: 1rem;
 }
-      
+
 .upgrade.-disabled {
     background-color: transparent;
     opacity: 0.5;
@@ -245,14 +245,6 @@ body {
       
 .upgrade:not(.-disabled):hover {
     transform: scale(1.05);
-}
-
-.upgrade .upgrade-img {
-    width: 100%;
-    height: 20vh;
-    background-color: black;
-    border: 1px solid white;
-    align-self: center;
 }
 
 .upgrade .upgrade-info {
