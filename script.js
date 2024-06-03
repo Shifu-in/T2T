@@ -16,14 +16,10 @@ document.addEventListener("DOMContentLoaded", function() {
         'DarkAvenger', 'LightGuardian', 'SilentShadow', 'MysticSeer', 'ArcaneKnight'
     ];
 
-    // Загружаем данные всех пользователей из localStorage
     let usersData = JSON.parse(localStorage.getItem('usersData')) || {};
-
-    // Получаем данные текущего пользователя
     let userId = localStorage.getItem('userId') || generateUserId();
     let userData = usersData[userId] || getDefaultUserData();
 
-    // Обновляем элементы интерфейса
     updateUserData();
 
     tapButton.addEventListener('click', function() {
@@ -76,6 +72,10 @@ document.addEventListener("DOMContentLoaded", function() {
         if (page === 'store') {
             renderUpgrades(userData.upgrades);
         }
+    }
+
+    function subscribeToChannel(url) {
+        window.open(url, '_blank');
     }
 
     navigateTo('main');
@@ -190,14 +190,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateUserData() {
-        // Обновляем отображаемые данные
         balanceValueElement.textContent = userData.balance;
         profileBalanceElement.textContent = userData.balance;
         userIdElement.textContent = userId;
         usernameElement.textContent = userData.username;
         autoRateElement.textContent = userData.autoRate;
 
-        // Сохраняем данные текущего пользователя
         usersData[userId] = userData;
         localStorage.setItem('usersData', JSON.stringify(usersData));
     }
