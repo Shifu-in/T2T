@@ -193,9 +193,8 @@ body {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    padding: 20vh 20vh 5vh 20vh;
-    align-items: flex-start;
-    margin-left: 1rem;
+    padding: 20vh 5vh;
+    align-items: center;
 }
 
 .store-content .info {
