@@ -464,4 +464,10 @@ td {
     .upgrade .upgrade-info ul {
         padding: 0 0.25rem;
     }
+
+    /* Увеличение размера кнопок на мобильных устройствах */
+    .btn {
+        font-size: 1.2rem;
+        padding: 0.5rem 1rem;
+    }
 }
