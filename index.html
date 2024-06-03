@@ -15,21 +15,21 @@
         <div class="game-screen">
             <div class="cookie-container">
                 <div class="cookie" id="tap-button">
-                    <img src="https://raw.githubusercontent.com/JdyL/img-host/eb12be794f4871f010a76e82211fbdff4c8dea00/svg/space-clicker/cookie.svg" alt="planet">
+                    <img src="assets/images/cookie.svg" alt="planet">
                 </div>
                 <div class="click-effect-container" id="click-effects">
                 </div>
             </div>
             <div class="stars">
-                <img src="https://raw.githubusercontent.com/JdyL/img-host/25e95e7b28baed293f29217d803ed09b90fc96c1/svg/space-clicker/stars.svg" alt="stars">
+                <img src="assets/images/stars.svg" alt="stars">
             </div>
         </div>
         <div class="navigation">
-            <button class="nav-button" onclick="navigateTo('profile')">Profile</button>
-            <button class="nav-button" onclick="navigateTo('store')">Store</button>
-            <button class="nav-button" onclick="navigateTo('partners')">Partners</button>
-            <button class="nav-button" onclick="navigateTo('entertainment')">Entertainment</button>
-            <button class="nav-button" onclick="navigateTo('property')">Property</button>
+            <button class="nav-button" onclick="navigateTo('profile')"><img src="assets/images/MenuButton.png" alt="Profile"></button>
+            <button class="nav-button" onclick="navigateTo('store')"><img src="assets/images/Gem.png" alt="Store"></button>
+            <button class="nav-button" onclick="navigateTo('partners')"><img src="assets/images/Lightning.png" alt="Partners"></button>
+            <button class="nav-button" onclick="navigateTo('entertainment')"><img src="assets/images/HomeButton.png" alt="Entertainment"></button>
+            <button class="nav-button" onclick="navigateTo('property')"><img src="assets/images/SettingsButton.png" alt="Property"></button>
         </div>
     </div>
 
@@ -41,7 +41,7 @@
             <p>User ID: <span id="user-id"></span></p>
             <p>Username: <span id="username"></span></p>
             <p>Balance: <span id="profile-balance">0</span></p>
-            <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+            <button class="nav-button" onclick="navigateTo('main')"><img src="assets/images/ExitButton.png" alt="Back to Game"></button>
         </div>
     </div>
 
@@ -56,7 +56,7 @@
             <div class="upgrade-list" id="upgrade-list">
                 <!-- Upgrades will be rendered here -->
             </div>
-            <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+            <button class="nav-button" onclick="navigateTo('main')"><img src="assets/images/ExitButton.png" alt="Back to Game"></button>
         </div>
     </div>
 
@@ -68,12 +68,12 @@
             <div class="partner">
                 <h3>Shifu Crypto</h3>
                 <p>Subscribe to our Telegram channel and earn 5,000 points!</p>
-                <button class="nav-button" onclick="subscribeToChannel('shifucrypto')">Subscribe</button>
-                <button class="nav-button" onclick="checkSubscription('shifucrypto')">Check Subscription</button>
+                <button class="nav-button" onclick="subscribeToChannel('shifucrypto')"><img src="assets/images/MenuButton.png" alt="Subscribe"></button>
+                <button class="nav-button" onclick="checkSubscription('shifucrypto')"><img src="assets/images/Lightning.png" alt="Check Subscription"></button>
             </div>
             <!-- Add more partners as needed -->
         </div>
-        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+        <button class="nav-button" onclick="navigateTo('main')"><img src="assets/images/ExitButton.png" alt="Back to Game"></button>
     </div>
 
     <div class="game-window" id="entertainment-page" style="display:none;">
@@ -112,7 +112,7 @@
                 </div>
             </div>
         </div>
-        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+        <button class="nav-button" onclick="navigateTo('main')"><img src="assets/images/ExitButton.png" alt="Back to Game"></button>
     </div>
 
     <div class="game-window" id="property-page" style="display:none;">
@@ -122,7 +122,7 @@
         <div class="property-content">
             <h1>Coming Soon</h1>
         </div>
-        <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
+        <button class="nav-button" onclick="navigateTo('main')"><img src="assets/images/ExitButton.png" alt="Back to Game"></button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
