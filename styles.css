@@ -439,3 +439,42 @@ td {
   width: 200px;
   font-family: 'Righteous', cursive;
 }
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+    .top-bar {
+        font-size: 5vh;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .game-message {
+        font-size: 1rem;
+    }
+
+    .cookie {
+        width: 30vh;
+        height: 30vh;
+    }
+
+    .navigation {
+        flex-direction: column;
+    }
+
+    .nav-button {
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-content p,
+    .store-content p {
+        font-size: 1rem;
+    }
+
+    .upgrade .upgrade-info h2 {
+        font-size: 1rem;
+    }
+
+    .upgrade .upgrade-info ul {
+        padding: 0 0.25rem;
+    }
+}
