@@ -1,20 +1,9 @@
 {
-    "name": "tap-game",
+    "name": "my-tap-game", 
     "version": "1.0.0",
-    "description": "Tap game with user data saving",
-    "main": "index.js",
     "scripts": {
-      "dev": "vercel dev",
-      "start": "node server.js"
-    },
-    "dependencies": {
-      "express": "^4.17.1",
-      "pg": "^8.7.1"
-    },
-    "devDependencies": {
-      "vercel": "^23.1.2"
-    },
-    "author": "Your Name",
-    "license": "ISC"
+      "dev": "next dev", 
+      "build": "next build",
+      "start": "next start"
+    }
   }
-  
