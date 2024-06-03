@@ -451,9 +451,9 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // Динамическое добавление кнопки "Export User Data" для администратора
-    if (userId === '802d237f-1bcc-4d49-ad8c-6873ba7ff0c5') {
+    if (userId === '802d237f-1bcc-4d49-ad8c-6873ba7ff0c5' && !document.querySelector('.nav-button.export-user-data')) {
         const exportButton = document.createElement('button');
-        exportButton.className = 'nav-button';
+        exportButton.className = 'nav-button export-user-data';
         exportButton.textContent = 'Export User Data';
         exportButton.onclick = exportUserData;
         document.querySelector('.profile-content').appendChild(exportButton);
