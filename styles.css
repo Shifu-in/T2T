@@ -165,6 +165,7 @@ body {
     border-radius: 0.5rem;
     cursor: pointer;
     color: #071521;
+    pointer-events: auto; /* Обеспечиваем возможность нажатия */
 }
 
 .nav-button:hover {
