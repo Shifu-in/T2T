@@ -17,8 +17,7 @@
                 <div class="cookie" id="tap-button">
                     <img src="https://raw.githubusercontent.com/JdyL/img-host/eb12be794f4871f010a76e82211fbdff4c8dea00/svg/space-clicker/cookie.svg" alt="planet">
                 </div>
-                <div class="click-effect-container" id="click-effects">
-                </div>
+                <div class="click-effect-container" id="click-effects"></div>
             </div>
             <div class="stars">
                 <img src="https://raw.githubusercontent.com/JdyL/img-host/25e95e7b28baed293f29217d803ed09b90fc96c1/svg/space-clicker/stars.svg" alt="stars">
@@ -42,7 +41,6 @@
             <p>Username: <span id="username"></span></p>
             <p>Balance: <span id="profile-balance">0</span></p>
             <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
-            <button class="nav-button" onclick="exportUserData()">Export User Data</button>
         </div>
     </div>
 
@@ -72,7 +70,6 @@
                 <button class="nav-button" onclick="subscribeToChannel('shifucrypto')">Subscribe</button>
                 <button class="nav-button" onclick="checkSubscription('shifucrypto')">Check Subscription</button>
             </div>
-            <!-- Add more partners as needed -->
         </div>
         <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
     </div>
@@ -105,7 +102,7 @@
                 <div class="selection-area hide-me">
                     <h3>Play As:</h3>
                     <button class="btn" id="X">X</button>
-                    <button class="btn" id="O">O</button>
+                    <button class="btn" id="O">O"></button>
                 </div>
                 <div class="message-area hide-me">
                     <h3 class="message">You Lose.</h3>
@@ -126,8 +123,6 @@
         <button class="nav-button" onclick="navigateTo('main')">Back to Game</button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
