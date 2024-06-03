@@ -1,473 +1,519 @@
-body {
-    background-color: #071521;
-    width: 100%;
-    height: 100vh;
-    color: white;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: -10;
-    position: absolute;
-}
+document.addEventListener("DOMContentLoaded", function() {
+    const balanceValueElement = document.querySelector('#balance-value');
+    const tapButton = document.querySelector('#tap-button');
+    const clickEffectsContainer = document.querySelector('#click-effects');
+    const profileBalanceElement = document.querySelector('#profile-balance');
+    const userIdElement = document.querySelector('#user-id');
+    const usernameElement = document.querySelector('#username');
+    const autoRateElement = document.querySelector('#auto-rate');
+    const upgradeListElement = document.querySelector('#upgrade-list');
 
-.game-window {
-    width: 90vw;
-    height: 90vh;
-    padding: 0.7rem;
-    display: flex;
-    flex-direction: column;
-}
+    const gamingNicknames = [
+        'ShadowHunter', 'MysticWarrior', 'StarKnight', 'PixelMaster', 'DragonSlayer',
+        'CosmicRider', 'CyberNinja', 'PhantomAssassin', 'QuantumWizard', 'StarGazer',
+        'NightStalker', 'MoonWalker', 'SpaceVoyager', 'GalacticHero', 'ThunderFist',
+        'IronBlade', 'StormBringer', 'FireMage', 'IceSorcerer', 'WindRanger',
+        'DarkAvenger', 'LightGuardian', 'SilentShadow', 'MysticSeer', 'ArcaneKnight'
+    ];
 
-.top-bar {
-    font-size: 7vh;
-    font-weight: 600;
-    padding-bottom: 1rem;
-    display: flex;
-    width: 100%;
-}
+    let balance = Number.parseInt(localStorage.getItem('balance'), 10) || 0;
+    let userId = localStorage.getItem('userId') || generateUserId();
+    let username = localStorage.getItem('username') || generateUsername();
+    let upgrades = JSON.parse(localStorage.getItem('upgrades')) || getDefaultUpgrades();
+    let tapPower = Number.parseInt(localStorage.getItem('tapPower'), 10) || 1;
+    let autoRate = calculateAutoRate(upgrades);
 
-.top-bar > * {
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
+    balanceValueElement.textContent = balance;
+    profileBalanceElement.textContent = balance;
+    userIdElement.textContent = userId;
+    usernameElement.textContent = username;
+    autoRateElement.textContent = autoRate;
 
-.game-message {
-    justify-content: center;
-    font-weight: 300;
-    font-size: 1.125rem;
-}
+    renderUpgrades(upgrades);
 
-.game-screen {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 1px solid white;
-}
+    tapButton.addEventListener('click', function() {
+        balance += tapPower;
+        updateBalance(balance);
+        showClickEffect(tapPower);
+        saveUserData();
+    });
 
-.stars {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    overflow: hidden;
-    z-index: -1;
-}
-
-.cookie-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    user-select: none;
-}
-
-@keyframes hovering {
-    0% {
-        margin-bottom: 0;
+    function generateUserId() {
+        const id = crypto.randomUUID();
+        localStorage.setItem('userId', id);
+        return id;
     }
-    50% {
-        margin-bottom: 10px;
+
+    function generateUsername() {
+        let username;
+        do {
+            const namePart1 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
+            const namePart2 = gamingNicknames[Math.floor(Math.random() * gamingNicknames.length)];
+            username = `${namePart1}${namePart2}`;
+        } while (username.length > 30 || localStorage.getItem(username) !== null);
+        localStorage.setItem('username', username);
+        return username;
     }
-    100% {
-        margin-bottom: 0;
+
+    function showClickEffect(value) {
+        const clickEffect = document.createElement('div');
+        clickEffect.classList.add('click-effect');
+        clickEffect.textContent = `+${value}`;
+        clickEffectsContainer.appendChild(clickEffect);
+
+        setTimeout(() => {
+            clickEffectsContainer.removeChild(clickEffect);
+        }, 500);
     }
-}
 
-@keyframes rotating {
-    0% {
-        transform: rotate(0deg);
+    window.navigateTo = function(page) {
+        document.querySelectorAll('.game-window').forEach(div => div.style.display = 'none');
+        document.getElementById(`${page}-page`).style.display = 'flex';
     }
-    100% {
-        transform: rotate(360deg);
+
+    navigateTo('main');
+
+    function updateBalance(newBalance) {
+        balance = newBalance;
+        balanceValueElement.textContent = balance;
+        profileBalanceElement.textContent = balance;
+        localStorage.setItem('balance', balance);
+        saveUserData();
     }
-}
 
-.cookie {
-    width: 40vh;
-    height: 40vh;
-    cursor: pointer;
-    transition: 0.2s;
-    animation: hovering 2s, rotating 60s infinite;
-    margin-bottom: 0;
-    transform: scale(1);
-}
-
-.cookie > img {
-    box-shadow: 0 0 30px rgba(255, 143, 154, 0.5);
-    border-radius: 999px;
-    transition: 0.1s;
-}
-
-.cookie > img:hover {
-    transform: scale(1.05);
-}
-
-.cookie > img:active {
-    transform: scale(1.1);
-}
-
-.cookie:hover {
-    transform: scale(1.1);
-}
-
-.click-effect-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-end;
-    position: relative;
-    user-select: none;
-}
-
-@keyframes move-up {
-    from {
-        bottom: 0%;
+    function autoIncrement() {
+        balance += autoRate;
+        updateBalance(balance);
+        saveUserData();
     }
-    to {
-        bottom: 30%;
+    
+    setInterval(autoIncrement, 1000);
+
+    function getDefaultUpgrades() {
+        return {
+            CLICK_MULTIPLIER: { displayName: "Click", description: "Multiply per click", baseMultiplier: 1, level: 0, cost: 50, costIncrement: 1.15, maxLevel: 10 },
+            AUTOCLICK: { displayName: "Auto-Click", description: "Automatically clicks", baseMultiplier: 1, level: 0, cost: 300, costIncrement: 1.15, maxLevel: 10 },
+            VOYAGER: { displayName: "Voyager", description: "Automatically clicks more", baseMultiplier: 2, level: 0, cost: 500, costIncrement: 1.15, maxLevel: 10 },
+            ROVER: { displayName: "Rover", description: "Multiply all resources", baseMultiplier: 5, level: 0, cost: 1000, costIncrement: 1.15, maxLevel: 10 },
+            DELIVERY: { displayName: "Delivery", description: "Multiply all resources", baseMultiplier: 10, level: 0, cost: 5000, costIncrement: 1.15, maxLevel: 10 },
+            NEW_PLANET: { displayName: "New Planet", description: "Double all resources to collect", baseMultiplier: 20, level: 0, cost: 10000, costIncrement: 1.15, maxLevel: 10 }
+        };
     }
-}
 
-@keyframes fade {
-    from {
-        opacity: 1;
+    function renderUpgrades(upgrades) {
+        upgradeListElement.innerHTML = '';
+        for (const [key, upgrade] of Object.entries(upgrades)) {
+            const upgradeDiv = document.createElement('div');
+            upgradeDiv.className = `upgrade ${balance < upgrade.cost || upgrade.level >= upgrade.maxLevel ? "-disabled" : ''}`;
+            upgradeDiv.innerHTML = `
+                <div class="upgrade-icon">
+                    <img src="assets/images/Gem.png" alt="${upgrade.displayName}">
+                </div>
+                <div class="upgrade-info">
+                    <h2>${upgrade.displayName}</h2>
+                    <ul>
+                        <li>Lv. ${upgrade.level}</li>
+                        <li class="cost ${balance < upgrade.cost ? '-disabled' : ''}">${upgrade.cost}</li>
+                        <li class="income">Income: ${calculateIncome(upgrade)} Energy/sec</li>
+                    </ul>
+                </div>
+            `;
+            upgradeDiv.onclick = () => {
+                if (balance >= upgrade.cost && !upgrade.unavailable && upgrade.level < upgrade.maxLevel) {
+                    balance -= upgrade.cost;
+                    upgrade.level += 1;
+                    upgrade.cost = Math.floor(upgrade.cost * upgrade.costIncrement);
+                    if (key === 'CLICK_MULTIPLIER') {
+                        tapPower += upgrade.baseMultiplier;
+                        localStorage.setItem('tapPower', tapPower);
+                    } else {
+                        autoRate += upgrade.baseMultiplier;
+                    }
+                    localStorage.setItem('balance', balance);
+                    localStorage.setItem('upgrades', JSON.stringify(upgrades));
+                    balanceValueElement.textContent = balance;
+                    profileBalanceElement.textContent = balance;
+                    autoRateElement.textContent = autoRate;
+                    renderUpgrades(upgrades);
+                    upgradeDiv.classList.add('active');
+                    setTimeout(() => {
+                        upgradeDiv.classList.remove('active');
+                    }, 200);
+                    saveUserData();
+                }
+            };
+            upgradeListElement.appendChild(upgradeDiv);
+        }
     }
-    to {
-        opacity: 0;
+
+    function calculateAutoRate(upgrades) {
+        let autoRate = 0;
+        for (const upgrade of Object.values(upgrades)) {
+            autoRate += upgrade.baseMultiplier * upgrade.level;
+        }
+        return autoRate;
     }
-}
 
-.click-effect {
-    width: 100px;
-    position: absolute;
-    left: 50%;
-    bottom: 0%;
-    opacity: 1;
-    animation: fade 0.5s, move-up 0.5s;
-    animation-fill-mode: forwards;
-}
+    function calculateIncome(upgrade) {
+        return upgrade.baseMultiplier * upgrade.level;
+    }
 
-.navigation {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 1rem;
-}
+    // Function to save user data to the server
+    async function saveUserData() {
+        const userData = {
+            userId: userId,
+            username: username,
+            balance: balance,
+            upgrades: upgrades,
+            tapPower: tapPower,
+            autoRate: autoRate
+        };
+        try {
+            const response = await fetch('/api/user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error('Error saving user data:', error);
+        }
+    }
 
-.nav-button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #3dffe5;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    color: #071521;
-}
+    // Function to load user data from the server
+    async function loadUserData(userId) {
+        try {
+            const response = await fetch(`/api/user?userId=${userId}`);
+            const userData = await response.json();
+            if (userData) {
+                balance = userData.balance || 0;
+                upgrades = userData.upgrades || getDefaultUpgrades();
+                tapPower = userData.tapPower || 1;
+                autoRate = calculateAutoRate(upgrades);
+                updateUI();
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
+        }
+    }
 
-.nav-button:hover {
-    background-color: #2bccb5;
-}
+    function updateUI() {
+        balanceValueElement.textContent = balance;
+        profileBalanceElement.textContent = balance;
+        userIdElement.textContent = userId;
+        usernameElement.textContent = username;
+        autoRateElement.textContent = autoRate;
+        renderUpgrades(upgrades);
+    }
 
-.profile-content,
-.store-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
+    // Load user data when the page loads
+    loadUserData(userId);
 
-.profile-content p,
-.store-content p {
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
-}
+    // Tic-Tac-Toe game logic
+    let playerSymbol = "";
+    let compSymbol = "";
+    let playerTurn;
 
-.store-content {
-    overflow: auto;
-    flex: 1;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    padding: 20vh 5vh;
-    align-items: center;
-}
+    const AI = function() {
+        let game = {};
+        let nextMove;
+        this.AISymbol = "";
 
-.store-content .info {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    padding-bottom: 1rem;
-    color: cyan;
-}
+        let _this = this;
 
-.upgrade-list { 
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
+        function minimax(state) {
+            if (state.gameOver()) {
+                return Game.score(state);
+            } else {
+                let scores = [];
+                let moves = state.emptyCells();
+                for (let i = 0; i < moves.length; i++) {
+                    let possibleState = new State(state, { turn: state.turn, position: moves[i] });
+                    let currScore = minimax(possibleState);
+                    scores.push(currScore);
+                }
 
-.upgrade {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    box-sizing: border-box;
-    transition: 0.2s;
-    cursor: pointer;
-    color: white;
-    border-radius: 0.2rem;
-    margin-bottom: 1vh;
-    user-select: none;
-    padding: 1rem;
-}
+                if (state.turn == "X") {
+                    let max = findMaxIndex(scores);
+                    nextMove = moves[max];
+                    return scores[max];
+                } else {
+                    let min = findMinIndex(scores);
+                    nextMove = moves[min];
+                    return scores[min];
+                }
+            }
+        }
 
-.upgrade-icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 1rem;
-}
+        this.plays = function(_game) {
+            game = _game;
+        };
 
-.upgrade.-disabled {
-    background-color: transparent;
-    opacity: 0.5;
-    cursor: no-drop;
-    border: none;
-}
-      
-.upgrade:not(.-disabled):hover {
-    transform: scale(1.05);
-}
+        this.takeMove = function(_state) {
+            _state.turn = _this.AISymbol;
+            minimax(_state);
+            let newState = new State(_state, { turn: _this.AISymbol, position: nextMove });
+            myGame.advanceTo(newState);
+        }
+    }
 
-.upgrade .upgrade-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    box-sizing: border-box;
-    flex: 1;
-    font-size: 1rem;
-}
+    const Game = function(AI) {
+        this.ai = AI;
+        this.currentState = new State();
+        this.currentState.turn = "X";
+        this.status = "start";
+
+        this.advanceTo = function(_state) {
+            this.currentState = _state;
+            this.updateUI();
+        }
+
+        this.start = function() {
+            if (this.status = "start") {
+                this.advanceTo(this.currentState);
+                this.status = "running";
+            }
+        }
+
+        this.updateUI = function() {
+            let board = this.currentState.board;
+            for (let i = 0; i <= 8; i++) {
+                let selector = "#space-" + i;
+                if (board[i]) {
+                    document.querySelector(selector).innerHTML = board[i];
+                    document.querySelector(selector).classList.remove("empty");
+                } else {
+                    document.querySelector(selector).innerHTML = "";
+                    document.querySelector(selector).classList.add("empty");
+                }
+            }
+
+            if (this.currentState.gameOver()) {
+                let message = "";
+                if (this.currentState.result == "draw") {
+                    message = "It's a draw.";
+                } else if (this.currentState.result != playerSymbol) {
+                    message = "You lose!";
+                } else {
+                    message = "You win!";
+                }
+                document.querySelector(".message").innerHTML = message;
+                document.querySelector(".message-area").style.display = 'block';
+            }
+        }
+
+        this.isValid = function(space) {
+            return this.currentState.board[space] == 0;
+        }
+    }
+
+    Game.score = function(_state) {
+        if (_state.result !== "active") {
+            if (_state.result === "X") {
+                return 10 - _state.depth;
+            } else if (_state.result === "O") {
+                return -10 + _state.depth;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    let State = function(old, move) {
+        this.turn = "";
+        this.depth = 0;
+        this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.result = "active";
+
+        if (old) {
+            for (let i = 0; i <= 8; i++) {
+                this.board[i] = old.board[i];
+            }
+            this.depth = old.depth;
+            this.result = old.result;
+            this.turn = old.turn;
+        }
+
+        if (move) {
+            this.turn = move.turn;
+            this.board[move.position] = move.turn;
+            if (move.turn === "O") {
+                this.depth++;
+            }
+            this.turn = move.turn == "X" ? "O" : "X";
+        }
+
+        this.emptyCells = function() {
+            let indexes = [];
+            for (let i = 0; i < 9; i++) {
+                if (this.board[i] === 0) {
+                    indexes.push(i);
+                }
+            }
+            return indexes;
+        }
+
+        this.gameOver = function() {
+            for (let i = 0; i <= 6; i += 3) {
+                if (this.board[i] !== 0 && this.board[i] === this.board[i + 1] && this.board[i + 1] === this.board[i + 2]) {
+                    this.result = this.board[i];
+                    return true;
+                }
+            }
+
+            for (let i = 0; i <= 2; i++) {
+                if (this.board[i] !== 0 && this.board[i] === this.board[i + 3] && this.board[i + 3] === this.board[i + 6]) {
+                    this.result = this.board[i];
+                    return true;
+                }
+            }
+
+            if (this.board[4] !== 0 && (((this.board[0] === this.board[4]) && (this.board[4] === this.board[8])) || 
+                                        ((this.board[2] === this.board[4]) && (this.board[4] === this.board[6])))) {
+                this.result = this.board[4];
+                return true;
+            }
+
+            let available = this.emptyCells();
+            if (available[0] == undefined) {
+                this.result = "draw";
+                return true;
+            } else {
+                return false;
+            }
+        };
+    }
+
+    let findMaxIndex = function(arr) {
+        let indexOfMax = 0;
+        let max = 0;
+        if (arr.length > 1) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] >= max) {
+                    indexOfMax = i;
+                    max = arr[i];
+                }
+            }
+        }
+        return indexOfMax;
+    }
+
+    let findMinIndex = function(arr) {
+        let indexOfMin = 0;
+        let min = 0;
+        if (arr.length > 1) {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] <= min) {
+                    indexOfMin = i;
+                    min = arr[i];
+                }
+            }
+        }
+        return indexOfMin;
+    }
+
+    let myAI = new AI();
+    let myGame = new Game(myAI);
+    myAI.plays(myGame);
+
+    document.querySelector(".selection-area .btn#X").addEventListener('click', function() {
+        playerSymbol = "X";
+        compSymbol = "O";
+        playerTurn = true;
+        playGame();
+    });
+
+    document.querySelector(".selection-area .btn#O").addEventListener('click', function() {
+        playerSymbol = "O";
+        compSymbol = "X";
+        playerTurn = false;
+        playGame();
+    });
+
+    let playGame = function() {
+        myAI = new AI();
+        myGame = new Game(myAI);
+        myAI.plays(myGame);
+
+        myGame.updateUI();
+
+        myAI.AISymbol = compSymbol;
+        Game.prototype.playerSymbol = playerSymbol;
+
+        document.querySelector(".hide-me").style.display = 'none';
+        document.querySelector(".board-area").style.display = 'block';
+
+        if (myAI.AISymbol == "X") {
+            myGame.ai.takeMove(myGame.currentState);
+            myGame.updateUI();
+            playerTurn = true;
+        }
+    }
+
+    document.querySelectorAll(".space").forEach(cell => {
+        cell.addEventListener('click', function() {
+            let num = this.getAttribute('id').substr(6, 6);
+            if (playerTurn && myGame.isValid(num)) {
+                let newState = new State(myGame.currentState, { turn: playerSymbol, position: num });
+                myGame.advanceTo(newState);
+                myGame.updateUI();
+                playerTurn = false;
+
+                setTimeout(function() {
+                    myGame.ai.takeMove(myGame.currentState);
+                    myGame.updateUI();
+                    playerTurn = true;
+                }, 1000);
+            }
+        });
+    });
+
+    document.querySelector("#replay").addEventListener('click', playGame);
+
+    // Function to export user data
+    window.exportUserData = function() {
+        // Unique identifier for admin user
+        const adminUserId = '802d237f-1bcc-4d49-ad8c-6873ba7ff0c5';
         
-.upgrade .upgrade-info ul {
-    padding: 0 0.5rem;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-}
+        // Check if the current user is an admin
+        if (userId === adminUserId) {
+            const userData = {
+                userId: userId,
+                username: username,
+                balance: balance,
+                upgrades: upgrades,
+                tapPower: tapPower,
+                autoRate: autoRate
+            };
 
-.upgrade .upgrade-info .cost {
-    color: lime;
-}
+            const userDataStr = JSON.stringify(userData, null, 2);
+            const blob = new Blob([userDataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
 
-.upgrade .upgrade-info .cost.-disabled {
-    color: red;
-}
-        
-.upgrade .upgrade-info h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
-}
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `user_data_${userId}.json`;
+            document.body.appendChild(a);
+            a.click();
 
-.upgrade.active {
-    border: 3px solid cyan;
-}
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 0);
+        } else {
+            alert('You do not have permission to export user data.');
+        }
+    };
 
-/* Added CSS for partners section */
-.partners-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    background-color: #0a1a2b;
-    padding: 1rem;
-}
-
-.partner {
-    background-color: #12263f;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    width: 80%;
-    text-align: center;
-}
-
-.partner h3 {
-    margin: 0.5rem 0;
-}
-
-.partner p {
-    margin: 0.5rem 0;
-}
-
-.partner .nav-button {
-    margin: 0.5rem;
-}
-
-/* Added CSS for entertainment section */
-.entertainment-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    background-color: #0a1a2b;
-    padding: 1rem;
-}
-
-.entertainment-content h1 {
-    margin-bottom: 20px;
-}
-
-#gameMode {
-    margin-bottom: 20px;
-}
-
-#gameBoard {
-    display: flex;
-    flex-direction: column;
-}
-
-.row {
-    display: flex;
-}
-
-.cell {
-    width: 60px;
-    height: 60px;
-    border: 1px solid #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.hidden {
-    display: none;
-}
-
-#status {
-    margin-top: 20px;
-    font-size: 18px;
-}
-
-/* Added CSS for property section */
-.property-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    background-color: #0a1a2b;
-    padding: 1rem;
-}
-
-.property-content h1 {
-    color: white;
-}
-
-/* Tic-Tac-Toe CSS */
-body {
-  background-color: #003C25;
-  color: #F7F8F7;
-}
-
-.board {
-  margin: 0 auto;
-  box-shadow: 1px 1px 1px 1px #000503;
-  background-color: #F7F8F7;
-  color: #003C25;
-}
-
-.btn {
-  color: #003C25;
-}
-
-.empty:hover {
-  background-color: #71AA94;
-}
-
-td {
-  border: 2px solid #000503;
-  width: 50px;
-  height: 50px;
-  margin: 0 auto;
-  font-size: 20px;
-}
-
-.board-area {
-  display: none;
-}
-
-.message-area {
-  margin: 0 auto;
-  text-align: center;
-  display: none;
-}
-
-.selection-area {
-  text-align: center;
-}
-
-.main {
-  bottom: 0;
-  height: 200px;
-  left: 0;
-  margin: auto;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 200px;
-  font-family: 'Righteous', cursive;
-}
-
-/* Media Queries for Mobile Devices */
-@media (max-width: 768px) {
-    .top-bar {
-        font-size: 5vh;
-        flex-direction: column;
-        text-align: center;
+    // Dynamically add "Export User Data" button for admin
+    if (userId === '802d237f-1bcc-4d49-ad8c-6873ba7ff0c5' && !document.querySelector('.nav-button.export-user-data')) {
+        const exportButton = document.createElement('button');
+        exportButton.className = 'nav-button export-user-data';
+        exportButton.textContent = 'Export User Data';
+        exportButton.onclick = exportUserData;
+        document.querySelector('.profile-content').appendChild(exportButton);
     }
-
-    .game-message {
-        font-size: 1rem;
-    }
-
-    .cookie {
-        width: 30vh;
-        height: 30vh;
-    }
-
-    .navigation {
-        flex-direction: column;
-    }
-
-    .nav-button {
-        margin-bottom: 0.5rem;
-    }
-
-    .profile-content p,
-    .store-content p {
-        font-size: 1rem;
-    }
-
-    .upgrade .upgrade-info h2 {
-        font-size: 1rem;
-    }
-
-    .upgrade .upgrade-info ul {
-        padding: 0 0.25rem;
-    }
-
-    /* Увеличение размера кнопок на мобильных устройствах */
-    .btn {
-        font-size: 1.2rem;
-        padding: 0.5rem 1rem;
-    }
-}
+});
