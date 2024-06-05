@@ -16,6 +16,22 @@ export default function Home() {
     setTapPower(savedTapPower);
     setUpgrades(savedUpgrades);
     setAutoRate(calculateAutoRate(savedUpgrades));
+
+    // Проверка и использование TonProvider
+    try {
+      const TonProvider = require('ton-provider'); // или другой способ импорта
+      const provider = new TonProvider();
+
+      if (provider && typeof provider.on === 'function' && provider.on('chainChanged')) {
+        provider.on('chainChanged', (chainId) => {
+          console.log('Chain changed to', chainId);
+        });
+      } else {
+        console.warn('Provider does not support chainChanged');
+      }
+    } catch (error) {
+      console.error('Error with TonProvider:', error);
+    }
   }, []);
 
   const handleTap = () => {
@@ -75,6 +91,7 @@ export default function Home() {
           <button className="nav-button" onClick={() => navigateTo('property')}>Property</button>
         </div>
       </div>
+      {/* Add other game windows here similar to the structure in your HTML file */}
     </div>
   );
 }
